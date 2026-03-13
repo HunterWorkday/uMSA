@@ -1,0 +1,13 @@
+# Confidential contract documents — do not commit
+*.pdf
+
+# OS and editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Optional
+node_modules/
