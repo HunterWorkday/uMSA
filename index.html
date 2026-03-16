@@ -3,311 +3,576 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>uMSA Competitive Research — oCIO Vendor Analysis</title>
+<title>Workday uMSA — Sales Enablement Hub</title>
 <style>
   :root {
-    --workday-blue: #0875e1;
-    --anthropic-orange: #d97706;
-    --databricks-red: #e11d48;
-    --gcp-blue: #1a73e8;
-    --openai-green: #10a37f;
-    --snowflake-blue: #29b5e8;
-    --aws-orange: #ff9900;
-    --bg: #f8fafc;
+    --wday-navy: #0f172a;
+    --wday-blue: #0875e1;
+    --bg: #f1f5f9;
     --card: #ffffff;
     --border: #e2e8f0;
     --text: #1e293b;
     --muted: #64748b;
-    --sidebar-w: 180px;
+    --green: #16a34a;
+    --amber: #d97706;
+    --red: #dc2626;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 14px;
-    line-height: 1.6;
-  }
+  /* HEADER */
+  header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--wday-navy); color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .header-top { padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e293b; }
+  .header-title { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+  .header-sub { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+  .header-badge { background: #1e3a5f; color: #60a5fa; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .tab-nav { display: flex; padding: 0 28px; }
+  .tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 600; color: #94a3b8; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .tab-btn:hover { color: white; }
+  .tab-btn.active { color: white; border-bottom-color: var(--wday-blue); }
 
-  /* TOP NAV */
-  header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: #0f172a;
-    color: white;
-    padding: 14px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-  header h1 { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
-  header .subtitle { font-size: 12px; color: #94a3b8; margin-top: 2px; }
-  .status-badge {
-    background: #1e3a5f; color: #60a5fa;
-    padding: 4px 12px; border-radius: 20px;
-    font-size: 11px; font-weight: 600; white-space: nowrap;
-  }
+  /* MAIN */
+  main { margin-top: 88px; padding: 32px 32px 60px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
 
-  /* LAYOUT */
-  .layout { display: flex; margin-top: 60px; min-height: calc(100vh - 60px); }
+  /* PAGE HEADER */
+  .page-title { font-size: 22px; font-weight: 800; color: var(--wday-navy); margin-bottom: 4px; letter-spacing: -0.3px; }
+  .page-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
 
-  /* SIDEBAR */
-  aside {
-    width: var(--sidebar-w);
-    position: fixed;
-    top: 60px; left: 0; bottom: 0;
-    background: #0f172a;
-    overflow-y: auto;
-    padding: 20px 0;
-    z-index: 50;
-  }
-  aside .nav-section { padding: 8px 16px 4px; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px; }
-  aside a {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 16px;
-    color: #94a3b8;
-    text-decoration: none;
-    font-size: 13px;
-    border-left: 3px solid transparent;
-    transition: all 0.15s;
-  }
-  aside a:hover { background: #1e293b; color: white; }
-  aside a.active { border-left-color: var(--workday-blue); color: white; background: #1e293b; }
-  .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  /* GRIDS */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 
-  /* MAIN CONTENT */
-  main { margin-left: var(--sidebar-w); padding: 32px 32px; max-width: none; width: calc(100% - var(--sidebar-w)); }
+  /* STAT CARDS */
+  .stat-card { background: var(--wday-navy); border-radius: 12px; padding: 20px 22px; color: white; }
+  .stat-num { font-size: 36px; font-weight: 800; color: #60a5fa; line-height: 1; margin-bottom: 6px; }
+  .stat-label { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .stat-desc { font-size: 12px; color: #94a3b8; }
 
-  /* SECTIONS */
-  .vendor-section { margin-bottom: 60px; scroll-margin-top: 80px; }
+  /* SECTION LABEL */
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 28px 0 12px; display: flex; align-items: center; gap: 10px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  .vendor-header {
-    display: flex; align-items: center; gap: 14px;
-    padding: 20px 24px;
-    border-radius: 12px 12px 0 0;
-    color: white;
-    margin-bottom: 0;
-  }
-  .vendor-header h2 { font-size: 22px; font-weight: 700; }
-  .vendor-header .vendor-desc { font-size: 12px; opacity: 0.8; margin-top: 2px; }
-  .vendor-logo { font-size: 28px; }
+  /* MUST-KNOW */
+  .know-list { display: flex; flex-direction: column; gap: 10px; }
+  .know-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; }
+  .know-num { flex-shrink: 0; width: 28px; height: 28px; background: var(--wday-blue); color: white; border-radius: 50%; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .know-item strong { display: block; font-size: 13px; font-weight: 700; color: var(--wday-navy); margin-bottom: 2px; }
+  .know-item span { font-size: 13px; color: #334155; }
 
-  .vendor-body {
-    background: white;
-    border: 1px solid var(--border);
-    border-top: none;
-    border-radius: 0 0 12px 12px;
-    overflow: hidden;
-  }
+  /* DIFF CARDS */
+  .diff-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; border-left: 4px solid var(--wday-blue); }
+  .diff-card h4 { font-size: 13px; font-weight: 700; color: var(--wday-navy); margin-bottom: 6px; }
+  .diff-card p { font-size: 13px; color: #475569; margin: 0; line-height: 1.55; }
 
-  /* TABS */
-  .tabs { display: flex; background: #f1f5f9; border-bottom: 1px solid var(--border); overflow-x: auto; }
-  .tab {
-    padding: 10px 18px;
-    font-size: 12px; font-weight: 600;
-    color: var(--muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: all 0.15s;
-    background: none; border-top: none; border-left: none; border-right: none;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--text); border-bottom-color: var(--text); background: white; }
+  /* ALERTS */
+  .alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; }
+  .alert.blue { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a5f; }
+  .alert.amber { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
+  .alert.green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
 
-  .tab-content { display: none; padding: 24px; }
-  .tab-content.active { display: block; }
+  /* PATHWAYS */
+  .pathway-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .pathway-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .pathway-header { padding: 18px 22px; color: white; }
+  .pathway-header.amendment { background: linear-gradient(135deg, #1e3a5f, #0875e1); }
+  .pathway-header.full-umsa { background: linear-gradient(135deg, #064e3b, #059669); }
+  .pathway-header h3 { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+  .pathway-header .pathway-sub { font-size: 12px; opacity: 0.8; }
+  .pathway-level { display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+  .pathway-body { background: white; padding: 20px 22px; }
+  .pathway-row { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+  .pathway-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .pathway-row-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 4px; }
+  .pathway-row-value { font-size: 13px; color: var(--text); }
+  .pathway-row-value ul { padding-left: 18px; margin-top: 4px; }
+  .pathway-row-value ul li { margin-bottom: 3px; font-size: 13px; }
 
-  /* CONTENT ELEMENTS */
-  h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
-  p { margin-bottom: 10px; color: #334155; }
+  /* COMPARE ITEMS */
+  .compare-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; }
+  .compare-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+  .compare-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .compare-icon { flex-shrink: 0; width: 20px; font-size: 14px; }
+  .compare-text { font-size: 13px; color: #334155; }
 
-  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
-  th { background: #f8fafc; padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); }
-  td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: #f8fafc; }
+  /* OBJECTIONS */
+  .tier-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 5px 12px; border-radius: 20px; display: inline-block; margin-bottom: 14px; }
+  .tier-1 { background: #fef3c7; color: #92400e; }
+  .tier-2 { background: #fee2e2; color: #991b1b; }
+  .tier-3 { background: #f1f5f9; color: #475569; }
+  .objection-tier { margin-bottom: 32px; }
 
+  .objection-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .objection-header { padding: 14px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #f8fafc; border-bottom: 1px solid var(--border); user-select: none; }
+  .objection-header:hover { background: #f1f5f9; }
+  .objection-quote { font-size: 14px; font-weight: 700; color: var(--text); }
+  .objection-chevron { flex-shrink: 0; font-size: 11px; color: var(--muted); transition: transform 0.2s; }
+  .objection-header.open .objection-chevron { transform: rotate(180deg); }
+  .objection-body { display: none; }
+  .objection-body.open { display: block; }
+
+  .obj-row { padding: 12px 20px; border-bottom: 1px solid #f8fafc; display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: start; }
+  .obj-row:last-child { border-bottom: none; }
+  .obj-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding-top: 2px; }
+  .obj-value { font-size: 13px; color: #334155; line-height: 1.6; }
+  .obj-value strong { color: var(--wday-navy); }
+  .obj-escalate { color: var(--red); font-weight: 600; }
+  .obj-resource { color: var(--wday-blue); font-weight: 600; }
+
+  /* COMPETITIVE */
+  .comp-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 24px; }
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .comp-table th { background: var(--wday-navy); color: #e2e8f0; padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; min-width: 130px; }
+  .comp-table th:first-child { min-width: 170px; }
+  .comp-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .comp-table td:first-child { font-weight: 600; background: #f8fafc; border-right: 1px solid var(--border); }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: #f8fafc; }
+  .comp-table tr:hover td:first-child { background: #f1f5f9; }
+  .wday-col { color: var(--wday-blue) !important; }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: var(--red); font-weight: 700; }
+  .warn-text { color: var(--amber); font-weight: 600; }
+
+  /* VENDOR GOTCHAS */
+  .gotcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .gotcha-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .vendor-name { font-size: 12px; font-weight: 800; margin-bottom: 10px; }
   .gotcha-list { list-style: none; }
-  .gotcha-list li {
-    padding: 10px 14px;
-    border-left: 3px solid #fca5a5;
-    background: #fff5f5;
-    margin-bottom: 8px;
-    border-radius: 0 6px 6px 0;
-    font-size: 13px;
-    color: #7f1d1d;
-  }
-  .gotcha-list li strong { color: #dc2626; }
-
-  .highlight-box {
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin: 12px 0;
-  }
-  .highlight-box.warn {
-    background: #fffbeb;
-    border-color: #fde68a;
-  }
-  .highlight-box.info {
-    background: #eff6ff;
-    border-color: #bfdbfe;
-  }
-  .highlight-box p { margin: 0; color: #1e293b; }
-
-  /* COMPARISON TABLE */
-  .comparison-section { scroll-margin-top: 80px; margin-bottom: 60px; }
-  .comparison-section h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-  .comparison-section .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
-
-  .comparison-table { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
-  .comparison-table table { margin: 0; width: 100%; }
-  .comparison-table th { background: #0f172a; color: #e2e8f0; min-width: 140px; white-space: nowrap; padding: 10px 16px; }
-  .comparison-table th:first-child { min-width: 180px; }
-  .comparison-table td { min-width: 140px; padding: 10px 16px; }
-  .comparison-table td:first-child { font-weight: 600; color: var(--text); background: #f8fafc; min-width: 180px; }
-
-  .check { color: #16a34a; font-weight: 700; }
-  .cross { color: #dc2626; font-weight: 700; }
-  .warn-text { color: #d97706; font-weight: 600; }
-
-  /* DIFFERENTIATORS */
-  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
-  .diff-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px;
-    border-top: 4px solid var(--workday-blue);
-  }
-  .diff-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--workday-blue); }
-  .diff-card p { font-size: 13px; color: #475569; margin: 0; }
-
-  /* WORKDAY SECTION */
-  .workday-header { background: linear-gradient(135deg, #0875e1, #0550a0); }
-
-  /* PENDING BADGE */
-  .pending {
-    display: inline-block;
-    background: #fef3c7; color: #92400e;
-    padding: 2px 8px; border-radius: 4px;
-    font-size: 11px; font-weight: 600;
-    margin-left: 8px;
-  }
-
-  /* SCROLLBAR */
-  aside::-webkit-scrollbar { width: 4px; }
-  aside::-webkit-scrollbar-track { background: transparent; }
-  aside::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-
-  code {
-    background: #f1f5f9;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-family: 'SF Mono', monospace;
-    font-size: 12px;
-    color: #0f172a;
-  }
-
-  .source-list { font-size: 11px; color: var(--muted); }
-  .source-list a { color: var(--workday-blue); text-decoration: none; }
-  .source-list a:hover { text-decoration: underline; }
+  .gotcha-list li { font-size: 12px; color: #475569; padding: 5px 0 5px 18px; border-bottom: 1px solid #f1f5f9; position: relative; }
+  .gotcha-list li::before { content: '⚠'; position: absolute; left: 0; font-size: 10px; }
+  .gotcha-list li:last-child { border-bottom: none; }
 
   @media (max-width: 768px) {
-    aside { display: none; }
-    main { margin-left: 0; padding: 20px; }
-    .diff-grid { grid-template-columns: 1fr; }
+    main { padding: 20px 16px 40px; }
+    .grid-3, .grid-2, .pathway-grid, .gotcha-grid { grid-template-columns: 1fr; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+    .obj-row { grid-template-columns: 1fr; gap: 4px; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>uMSA Competitive Research</h1>
-    <div class="subtitle">Office of the CIO Vendor Agreement Analysis · Workday content from Universal MSA v26.2 &amp; Universal Amendment · March 2026</div>
+  <div class="header-top">
+    <div>
+      <div class="header-title">Workday uMSA — Sales Enablement Hub</div>
+      <div class="header-sub">Internal · Sales Reference · March 2026</div>
+    </div>
+    <span class="header-badge">Internal Only</span>
   </div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('home',this)">Home</button>
+    <button class="tab-btn" onclick="showTab('pathways',this)">Two Pathways</button>
+    <button class="tab-btn" onclick="showTab('objections',this)">Objection Prep</button>
+    <button class="tab-btn" onclick="showTab('competitive',this)">Competitive Intel</button>
+  </nav>
 </header>
-
-<div class="layout">
-
-<aside>
-  <div class="nav-section">Overview</div>
-  <a href="#workday" class="active"><span class="nav-dot" style="background:#0875e1"></span>Workday uMSA</a>
-  <a href="#comparison"><span class="nav-dot" style="background:#6366f1"></span>Comparison Table</a>
-  <a href="#differentiators"><span class="nav-dot" style="background:#16a34a"></span>Key Differentiators</a>
-
-  <div class="nav-section" style="margin-top:12px">Vendor Deep Dives</div>
-  <a href="#anthropic"><span class="nav-dot" style="background:#d97706"></span>Anthropic</a>
-  <a href="#databricks"><span class="nav-dot" style="background:#e11d48"></span>Databricks</a>
-  <a href="#gcp"><span class="nav-dot" style="background:#1a73e8"></span>GCP</a>
-  <a href="#openai"><span class="nav-dot" style="background:#10a37f"></span>OpenAI</a>
-  <a href="#snowflake"><span class="nav-dot" style="background:#29b5e8"></span>Snowflake</a>
-  <a href="#aws"><span class="nav-dot" style="background:#ff9900"></span>AWS</a>
-</aside>
 
 <main>
 
-<!-- ============================================================ WORKDAY -->
-<section class="vendor-section" id="workday">
-  <div class="vendor-header workday-header">
-    <div>
-      <h2>Workday uMSA — Quick Reference</h2>
-      <div class="vendor-desc">Universal Main Subscription Agreement (MSA) US and Canada v26.2 + Universal Amendment to the MSA · Agreement provided to customers at tier/NDA</div>
+<!-- ===== HOME ===== -->
+<div class="tab-panel active" id="tab-home">
+  <div class="page-title">Sales Quick Reference</div>
+  <div class="page-sub">What every AE needs to know before a uMSA conversation</div>
+
+  <div class="grid-3" style="margin-bottom:28px">
+    <div class="stat-card">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Agreement for all products</div>
+      <div class="stat-desc">No new contract needed for every new Workday product</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Changes from the legacy MSA</div>
+      <div class="stat-desc">Product Terms, Enhanced Features, AI ownership, in-tenant controls</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Individual addenda needed</div>
+      <div class="stat-desc">Access innovations the moment they're released — no waiting</div>
     </div>
   </div>
-  <div class="vendor-body">
-    <div style="padding:24px">
-      <table>
-        <thead><tr><th>Dimension</th><th>Workday uMSA (contract language)</th></tr></thead>
-        <tbody>
-          <tr><td>Agreement type</td><td>Single <strong>Universal Main Subscription Agreement (MSA)</strong> covering all Workday products. Includes Order Form, MSA, Security Exhibit, Data Processing Exhibit (DPE), Business Associate Exhibit (if applicable), Product Terms. Order Form takes precedence over MSA and exhibits (Cl. 10.14).</td></tr>
-          <tr><td>Customer Content</td><td>Customer owns all right, title, and interest to its Customer Content. Workday has the right to use Customer Content <strong>only to provide the Service</strong>, subject to the Agreement (Cl. 3(a)).</td></tr>
-          <tr><td>AI / Outputs</td><td>Per Amendment: Customer owns all right, title, and interest in <strong>Outputs</strong>. Workday develops AI Systems per applicable Law (e.g., EU AI Act). Workday does not use Customer Content to train external AI/ML models. Customer may request AI fact sheets.</td></tr>
-          <tr><td>Liability cap</td><td><strong>General Cap:</strong> 12-month fees for the Service from which the claim arose. <strong>Enhanced Cap:</strong> 24-month fees for breach of confidentiality, security, or privacy (Cl. 8.1). Caps do <strong>not</strong> apply to: gross negligence/willful misconduct/fraud, indemnification, Customer payment obligations, or <strong>Workday’s remediation obligations (Cl. 8.3)</strong>.</td></tr>
-          <tr><td>Breach remediation (Cl. 8.3)</td><td><strong>✅ Outside liability cap.</strong> Workday pays reasonable and documented costs for: forensic investigation; notifications (government, media if required by Law, Affected Individuals); credit monitoring (1 year) for those who elect; call center (1 year). No responsibility if due to Customer gross negligence/willful misconduct/fraud.</td></tr>
-          <tr><td>Breach notification</td><td><strong>48 hours</strong> or shorter if required by Law (Cl. 5.3). Workday conducts root cause analysis and, upon request, shares results and remediation plan.</td></tr>
-          <tr><td>Security &amp; Audit Reports</td><td>Security program conforms to Security Exhibit and Audit Reports. Audit Reports made available via self-service or upon written request. No update may materially decrease protections during the Term (Cl. 5.1; Amendment §5).</td></tr>
-          <tr><td>SLA &amp; Service Credits</td><td>SLA per Product Terms; no material decrease during Order Term. Service Credits (Cl. 10.13): 2nd/3rd/4th Failure in rolling 6-month period → 10% / 20% / 30% credit. Request within 60 days of Failure.</td></tr>
-          <tr><td>Retrieval &amp; Transition</td><td>Up to <strong>60 days</strong> at no cost to retrieve Customer Content in <strong>machine-readable format</strong> (Cl. 9.2). Optional <strong>up to 3 months</strong> Transition Period after termination if requested before termination (Cl. 9.3).</td></tr>
-          <tr><td>IP indemnification</td><td>Workday defends and indemnifies for third-party IP claims re use of Service; carveouts for modification, misuse, combination (Cl. 7.1).</td></tr>
-          <tr><td>Product Terms / changes</td><td>No update may materially decrease security/privacy; changes not effective until <strong>30 days after publication</strong> (MSA def.; Amendment §11).</td></tr>
-          <tr><td>HIPAA BAA</td><td>✅ Yes (Business Associate Exhibit if applicable)</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box" style="margin-top:16px">
-        <p><strong>Source:</strong> Universal Main Subscription Agreement (uMSA) US and Canada v26.2 and Universal Amendment to the MSA. One agreement for every Workday product. Customer Content used only to provide the Service; Customer owns all Outputs. Breach remediation (Cl. 8.3) is contractually carved out of the liability cap — unique among all vendors reviewed.</p>
+
+  <div class="section-label">Must-know for every AE</div>
+  <div class="know-list" style="margin-bottom:28px">
+    <div class="know-item">
+      <div class="know-num">1</div>
+      <div>
+        <strong>Migration is mandatory at renewal — early movers have leverage</strong>
+        <span>All customers migrate to uMSA at their next renewal. Early movers get immediate access to Sana, Flex Credits, and all new AI SKUs. Customers who wait get locked out until they do. Use this as a positive urgency play, not a threat.</span>
+      </div>
+    </div>
+    <div class="know-item">
+      <div class="know-num">2</div>
+      <div>
+        <strong>Workday does not train on customer data — and it's in the contract</strong>
+        <span>MSA Cl. 3(a): Customer Content is used only to provide the Service. The Universal Amendment explicitly states Workday does not use Customer Content to train external AI or ML models. This is a contractual obligation — not a policy statement that can be updated quietly.</span>
+      </div>
+    </div>
+    <div class="know-item">
+      <div class="know-num">3</div>
+      <div>
+        <strong>Breach remediation costs are outside the liability cap — no other vendor does this</strong>
+        <span>MSA Cl. 8.3: Workday pays reasonable documented costs for forensic investigation, breach notifications, credit monitoring (1 year), and call center (1 year) when Workday causes a breach. AWS, GCP, Anthropic, Snowflake, Databricks, and OpenAI all cap these costs. Workday doesn't.</span>
+      </div>
+    </div>
+    <div class="know-item">
+      <div class="know-num">4</div>
+      <div>
+        <strong>This is not a re-trade — existing commercial terms carry forward intact</strong>
+        <span>Pricing, SLAs, and protections are not renegotiated. uMSA migration is a structural update to the contract framework. If a customer uses migration as leverage to reopen deal economics, that is a sales conversation, not a legal one.</span>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ============================================================ COMPARISON -->
-<section class="comparison-section" id="comparison">
-  <h2>Cross-Vendor Comparison</h2>
-  <div class="sub">Key dimensions across all oCIO vendors vs. Workday uMSA (sourced from Universal MSA v26.2 and Universal Amendment)</div>
-  <div class="comparison-table">
-    <table>
+  <div class="section-label">Key differentiators vs. the market</div>
+  <div class="grid-2">
+    <div class="diff-card">
+      <h4>Breach remediation outside the cap (Cl. 8.3)</h4>
+      <p>Workday contractually pays for forensic investigation, notifications, credit monitoring (1yr), and call center (1yr) when Workday causes a breach — not capped. No peer vendor does this.</p>
+    </div>
+    <div class="diff-card">
+      <h4>48-hour breach notification — contractual, not aspirational</h4>
+      <p>Cl. 5.3 requires Workday to notify within 48 hours of becoming aware of a Security Breach. Snowflake commits to 72 hours but took 45 days in 2024. GCP and OpenAI use undefined "without undue delay."</p>
+    </div>
+    <div class="diff-card">
+      <h4>24-month liability cap for confidentiality and security breaches</h4>
+      <p>Enhanced cap of 24 months of fees (vs. 12-month standard) for breach of confidentiality, security, or privacy. Most competitors are 12 months. Breach remediation costs are on top of this — excluded from the cap entirely.</p>
+    </div>
+    <div class="diff-card">
+      <h4>Customer owns all Outputs — explicit in the contract</h4>
+      <p>The Universal Amendment explicitly states Customer owns all right, title, and interest in AI Outputs made available in the Customer's instance. Contract-level commitment — not embedded in a policy document or tier-dependent.</p>
+    </div>
+    <div class="diff-card">
+      <h4>Single agreement for every Workday product</h4>
+      <p>One Order Form + MSA + Security Exhibit + DPE + Product Terms covers ERP, HCM, Finance, Sana, and every future product. Competitors use layered URL-incorporated stacks where continued use can equal acceptance of changes.</p>
+    </div>
+    <div class="diff-card">
+      <h4>Product Terms: 30-day notice, no material decrease in protections</h4>
+      <p>Workday cannot materially decrease security, privacy, or SLA protections through Product Terms updates. Any change requires 30 days' notice before it takes effect. Most competitors have no equivalent guarantee.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TWO PATHWAYS ===== -->
+<div class="tab-panel" id="tab-pathways">
+  <div class="page-title">The Two Migration Pathways</div>
+  <div class="page-sub">Two different documents — same end state. Know which one your customer is on before the conversation.</div>
+
+  <div class="alert blue">
+    <strong>The key question to ask first:</strong> Does the customer have an existing Workday MSA? If yes → Amendment path (Level 2/3). If no, or their MSA is being fully replaced → Full UMSA path (Level 1).
+  </div>
+
+  <div class="pathway-grid">
+    <div class="pathway-card">
+      <div class="pathway-header amendment">
+        <div class="pathway-level">Level 2 &amp; 3</div>
+        <h3>Universal Amendment to the MSA</h3>
+        <div class="pathway-sub">For existing customers — amends their current MSA</div>
+      </div>
+      <div class="pathway-body">
+        <div class="pathway-row">
+          <div class="pathway-row-label">Who it applies to</div>
+          <div class="pathway-row-value">Existing Workday customers with a current MSA. The amendment layers on top of the existing agreement.</div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">What they sign</div>
+          <div class="pathway-row-value"><strong>Universal Amendment to the MSA.</strong> Takes effect at the start date of the Order Form that incorporates it. The existing MSA remains in full force except where specifically amended.</div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">What changes</div>
+          <div class="pathway-row-value">
+            <ul>
+              <li>Product addenda replaced by Product Terms</li>
+              <li>Enhanced Features framework — explicit AI/ML feature lists and in-tenant data contribution controls</li>
+              <li>AI Output ownership explicitly stated</li>
+              <li>30-day notice required for Product Terms changes</li>
+              <li>No material decrease in security/privacy/SLA allowed</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">What stays the same</div>
+          <div class="pathway-row-value">Existing MSA remains the core agreement. Pricing, SLAs, and commercial protections carry forward. This is not a re-trade.</div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">Key talking point</div>
+          <div class="pathway-row-value">"We're not replacing your agreement — we're adding a layer that gives you access to all of Workday's AI innovations without ever signing another addendum."</div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">Common objection</div>
+          <div class="pathway-row-value">"Why do we need to sign anything new?" — Without the Amendment, the customer cannot access Flex Credits, Sana, or any new AI SKUs. Frame as unlocking, not obligating.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pathway-card">
+      <div class="pathway-header full-umsa">
+        <div class="pathway-level">Level 1</div>
+        <h3>Universal Main Subscription Agreement</h3>
+        <div class="pathway-sub">For new customers or full MSA replacements</div>
+      </div>
+      <div class="pathway-body">
+        <div class="pathway-row">
+          <div class="pathway-row-label">Who it applies to</div>
+          <div class="pathway-row-value">New Workday customers, or existing customers whose MSA is being fully superseded and replaced.</div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">What they sign</div>
+          <div class="pathway-row-value"><strong>Universal Main Subscription Agreement (UMSA).</strong> Full replacement — supersedes and replaces the existing MSA. Takes effect on the Effective Date or the date on the Order Form referencing UMSA terms.</div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">What changes</div>
+          <div class="pathway-row-value">
+            <ul>
+              <li>Existing MSA is superseded and replaced in full</li>
+              <li>New Universal Security Exhibit (USE) and Universal Data Processing Exhibit (UDPE) apply</li>
+              <li>Product Terms replace all prior product addenda</li>
+              <li>Enhanced liability cap: 24-month for confidentiality/security/privacy breach</li>
+              <li>Breach remediation costs outside the cap (Cl. 8.3)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">What stays the same</div>
+          <div class="pathway-row-value">Commercial terms, pricing, and SLA commitments from the Order Form carry forward. Migration is a structural change — not a commercial renegotiation.</div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">Key talking point</div>
+          <div class="pathway-row-value">"You're on the same contractual foundation as every new Workday customer — with all of our premium security and AI protections built in from day one."</div>
+        </div>
+        <div class="pathway-row">
+          <div class="pathway-row-label">Common objection</div>
+          <div class="pathway-row-value">"We're replacing our entire MSA — can we redline it?" — The UMSA is a platform standard. Same terms apply to every customer. There is no bespoke negotiation on base terms. This is actually faster for Legal to review, not slower.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">What's the same across both paths</div>
+  <div class="compare-wrap">
+    <div class="grid-2" style="gap:0">
+      <div>
+        <div class="compare-item"><div class="compare-icon">✅</div><div class="compare-text"><strong>Customer data ownership</strong> — You own all Customer Content on both paths</div></div>
+        <div class="compare-item"><div class="compare-icon">✅</div><div class="compare-text"><strong>No training on customer data</strong> — Contractual, not policy, on both paths</div></div>
+        <div class="compare-item"><div class="compare-icon">✅</div><div class="compare-text"><strong>48-hour breach notification</strong> — Cl. 5.3 applies on both paths</div></div>
+        <div class="compare-item"><div class="compare-icon">✅</div><div class="compare-text"><strong>Same security certifications</strong> — SOC 1/2, ISO 27001/17/18/27701</div></div>
+      </div>
+      <div>
+        <div class="compare-item"><div class="compare-icon">✅</div><div class="compare-text"><strong>SLA commitments</strong> — Service level commitments carry forward on both paths</div></div>
+        <div class="compare-item"><div class="compare-icon">✅</div><div class="compare-text"><strong>AI Output ownership</strong> — Customer owns all Outputs on both paths</div></div>
+        <div class="compare-item"><div class="compare-icon">✅</div><div class="compare-text"><strong>30-day notice for Product Terms changes</strong> — Both paths have this protection</div></div>
+        <div class="compare-item"><div class="compare-icon">✅</div><div class="compare-text"><strong>In-tenant AI controls</strong> — Manage data contribution and AI config in-tenant</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert amber">
+    <strong>If the customer tries to use migration to reopen commercial terms:</strong> That is a sales conversation, not a legal one. Migration does not reset pricing, SLAs, or protections. Redirect and escalate to your manager if it persists.
+  </div>
+</div>
+
+<!-- ===== OBJECTIONS ===== -->
+<div class="tab-panel" id="tab-objections">
+  <div class="page-title">Objection Prep Guide</div>
+  <div class="page-sub">The 6 recurring objection clusters — what they really mean and how to respond</div>
+
+  <div class="alert blue">
+    <strong>The pattern behind every objection:</strong> Nearly every uMSA objection is a variation of one question — <em>"If we migrate to access Workday's AI, what happens to our data, our outputs, our control, and our risk?"</em> The answer is always: you're better protected under the uMSA than you were before.
+  </div>
+
+  <!-- TIER 1 -->
+  <div class="objection-tier">
+    <span class="tier-label tier-1">Tier 1 — Most common · Address proactively</span>
+
+    <div class="objection-card">
+      <div class="objection-header open" onclick="toggleObj(this)">
+        <span class="objection-quote">"Workday is going to train on our data."</span>
+        <span class="objection-chevron">▼</span>
+      </div>
+      <div class="objection-body open">
+        <div class="obj-row">
+          <div class="obj-label">What they're really worried about</div>
+          <div class="obj-value">They've seen news about AI companies training on customer data. They assume Workday operates the same way. Often triggered by the word "AI" appearing in the new contract framework.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Approved positioning</div>
+          <div class="obj-value"><strong>Workday does not train external AI or ML models on Customer Content. It's in the contract.</strong> MSA Cl. 3(a): Customer Content is used only to provide the Service. The Universal Amendment adds an explicit statement confirming this. This is a contractual obligation — not a policy document that can be updated quietly.<br><br>Important distinction: "data contribution" is separate from training. Data contribution refers to opt-in/opt-out of using anonymized, aggregated signals to improve Workday models. The customer controls this toggle in-tenant. Training on identifiable Customer Content is prohibited, period.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">When to escalate</div>
+          <div class="obj-value obj-escalate">If the customer wants to add custom AI data use language beyond what the contract provides, loop in Legal. Bespoke AI addenda are not on the table, but there are standard paths for transparency requests.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Resource to send</div>
+          <div class="obj-value obj-resource">AI Fact Sheet · Universal Amendment (AI Systems section) · Product Terms for applicable product</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="objection-card">
+      <div class="objection-header" onclick="toggleObj(this)">
+        <span class="objection-quote">"We want our own AI addendum / we need more AI-specific contract language."</span>
+        <span class="objection-chevron">▼</span>
+      </div>
+      <div class="objection-body">
+        <div class="obj-row">
+          <div class="obj-label">What they're really worried about</div>
+          <div class="obj-value">Legal has seen AI-specific addenda from other vendors and assumes the uMSA is missing protections because there's no standalone AI section. They may not realize the protections are distributed across the contract architecture.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Approved positioning</div>
+          <div class="obj-value"><strong>The AI protections are already in the contract — just distributed across the right sections.</strong> Walk them through it: Cl. 3(a) covers no training. The Universal Amendment covers Output ownership and AI System governance. Product Terms cover Enhanced Features and AI controls. AI Fact Sheets provide transparency on model training, inputs/outputs, and limitations.<br><br>Workday cannot agree to bespoke AI terms for individual customers. The Product Terms are a platform standard — offering a custom addendum would create inconsistent protections and is not the model.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">When to escalate</div>
+          <div class="obj-value obj-escalate">If the customer pushes hard on custom AI language, loop in Legal for a read on what is and isn't possible. Do not make commitments on bespoke AI terms without Legal's involvement.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Resource to send</div>
+          <div class="obj-value obj-resource">AI Fact Sheet · Universal Amendment (highlight AI Systems section) · Product Terms · Responsible AI FAQ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="objection-card">
+      <div class="objection-header" onclick="toggleObj(this)">
+        <span class="objection-quote">"Who owns the AI outputs? What exactly counts as an 'Output'?"</span>
+        <span class="objection-chevron">▼</span>
+      </div>
+      <div class="objection-body">
+        <div class="obj-row">
+          <div class="obj-label">What they're really worried about</div>
+          <div class="obj-value">Legal teams know AI output ownership is unsettled territory. They want to know exactly what they own vs. what Workday retains. Often they've seen contracts where this is ambiguous or tier-dependent.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Approved positioning</div>
+          <div class="obj-value"><strong>Customer owns all right, title, and interest in Outputs made available in the Customer's instance. Explicit in the Universal Amendment.</strong><br><br>The definition of "Outputs" is scoped to outputs made available in the Customer's instance as part of the Service. This covers everything the customer sees and uses in Workday. Customers sometimes push to remove the "in the Customer's instance" limitation — Workday's position is to retain this because it is tied to the AI System definition and the ownership construct. Removing it would create ambiguity, not clarity.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">When to escalate</div>
+          <div class="obj-value obj-escalate">If the customer wants to modify the definition of "Outputs," that is a Legal conversation. Do not agree to language changes in the moment.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Resource to send</div>
+          <div class="obj-value obj-resource">Universal Amendment (Outputs ownership section) · AI Fact Sheet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 2 -->
+  <div class="objection-tier">
+    <span class="tier-label tier-2">Tier 2 — Less frequent, higher risk · Recognize early</span>
+
+    <div class="objection-card">
+      <div class="objection-header" onclick="toggleObj(this)">
+        <span class="objection-quote">"We don't want AI making employment decisions or other high-stakes calls automatically."</span>
+        <span class="objection-chevron">▼</span>
+      </div>
+      <div class="objection-body">
+        <div class="obj-row">
+          <div class="obj-label">What they're really worried about</div>
+          <div class="obj-value">This is a real legal concern, especially for HR buyers. EU AI Act and emerging employment law in multiple jurisdictions creates genuine liability for automated employment decisions. They want Workday to bear risk they see as Workday's responsibility.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Approved positioning</div>
+          <div class="obj-value"><strong>Workday positions AI as decision-support, not autonomous decision-making in high-risk contexts. This is a design principle, not a limitation.</strong><br><br>The AUP expressly bars use of the Service for automated decision-making with legal effects — including employment decisions — unless a human makes, reviews, or oversees the final decision. The customer is responsible for the final decision based on Outputs. Frame this as Workday building AI responsibly. The human-in-the-loop requirement is the right architecture for high-stakes decisions.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">When to escalate</div>
+          <div class="obj-value obj-escalate">If the customer wants to soften Disallowed Usage language around employment decisions, stop immediately. This is a hard line — escalate to Legal right away. Do not negotiate AUP terms on the fly.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Resource to send</div>
+          <div class="obj-value obj-resource">Responsible AI FAQ · AI Fact Sheet (ethics and limitations section) · AUP (Disallowed Usage section)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="objection-card">
+      <div class="objection-header" onclick="toggleObj(this)">
+        <span class="objection-quote">"Why are we responsible for complying with the AUP? That's Workday's policy."</span>
+        <span class="objection-chevron">▼</span>
+      </div>
+      <div class="objection-body">
+        <div class="obj-row">
+          <div class="obj-label">What they're really worried about</div>
+          <div class="obj-value">The customer doesn't understand why they're being asked to own compliance obligations for an AI system they didn't build. They feel the AUP shifts risk onto them for Workday's technology decisions.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Approved positioning</div>
+          <div class="obj-value"><strong>The AUP flows down from Workday's own subprocessors and is standard across all enterprise SaaS.</strong> Workday must be able to suspend access if a takedown or legal requirement arises — the customer's acknowledgment of the AUP is what makes that legally possible. This is not Workday dumping risk; it is preserving the ability to protect the entire platform.<br><br>The AUP obligations mirror what the customer already has with AWS, Google, or Microsoft. Frame it as a standard operating agreement, not a unique burden.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">When to escalate</div>
+          <div class="obj-value obj-escalate">If the customer wants to modify AUP obligations or carve out specific uses from their responsibilities, loop in Legal.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Resource to send</div>
+          <div class="obj-value obj-resource">AUP document · Responsible AI FAQ · Comparison to standard IaaS AUP requirements</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 3 -->
+  <div class="objection-tier">
+    <span class="tier-label tier-3">Tier 3 — Migration mechanics · Have a narrative ready</span>
+
+    <div class="objection-card">
+      <div class="objection-header" onclick="toggleObj(this)">
+        <span class="objection-quote">"We don't like dynamic terms / we want to renegotiate our legacy MSA / why do we have to migrate?"</span>
+        <span class="objection-chevron">▼</span>
+      </div>
+      <div class="objection-body">
+        <div class="obj-row">
+          <div class="obj-label">What they're really worried about</div>
+          <div class="obj-value">This cluster has multiple shapes: (a) genuine discomfort with URL-incorporated terms that can change mid-contract; (b) migration fatigue — they don't want to spend legal review time on a contract change; (c) opportunistic — using migration as a hook to reopen legacy MSA economics; (d) geographic/hosting commitments from their legacy MSA.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Approved positioning</div>
+          <div class="obj-value"><strong>Address the specific shape, not just the surface complaint.</strong><br><br><strong>On dynamic terms:</strong> Product Terms require 30-day notice and cannot materially decrease security, privacy, or SLA protections. Stronger than most SaaS contracts, where continued use equals acceptance of any change.<br><br><strong>On migration fatigue:</strong> The terms are non-negotiable platform standards, which actually shortens legal review significantly. It's simpler than it looks — not a complex redline process.<br><br><strong>On re-trade attempts:</strong> Migration is not a commercial reset. Pricing, SLAs, and protections carry forward. Be firm — if it escalates, involve your manager.<br><br><strong>On "why migrate":</strong> Without migration, the customer cannot access new AI SKUs, Flex Credits, Sana, or next-generation innovations.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">When to escalate</div>
+          <div class="obj-value obj-escalate">If the customer is attempting a material re-trade of legacy MSA risk allocation (liability caps, geographic commitments, indemnity), loop in Legal and your manager. Do not negotiate those terms independently.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-label">Resource to send</div>
+          <div class="obj-value obj-resource">Universal Amendment FAQ (Level 2/3) or UMSA FAQ (Level 1) · Migration overview deck · Product Terms change policy summary</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COMPETITIVE INTEL ===== -->
+<div class="tab-panel" id="tab-competitive">
+  <div class="page-title">Competitive Intel</div>
+  <div class="page-sub">How Workday's uMSA stacks up — headlines for sales conversations</div>
+
+  <div class="section-label">Cross-vendor comparison</div>
+  <div class="comp-wrap">
+    <table class="comp-table">
       <thead>
         <tr>
           <th>Dimension</th>
           <th style="color:#60a5fa">Workday</th>
           <th style="color:#fbbf24">Anthropic</th>
           <th style="color:#f87171">Databricks</th>
-          <th style="color:#60a5fa">GCP</th>
-          <th style="color:#34d399">OpenAI</th>
+          <th style="color:#93c5fd">GCP</th>
+          <th style="color:#6ee7b7">OpenAI</th>
           <th style="color:#7dd3fc">Snowflake</th>
-          <th style="color:#fbbf24">AWS</th>
+          <th style="color:#fcd34d">AWS</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Agreement Structure</td>
-          <td><strong>Single Universal MSA</strong>; Order Form + MSA + Security Exhibit + DPE + Product Terms; Order Form precedence (Cl. 10.14)</td>
+          <td>Agreement structure</td>
+          <td class="wday-col">Single Universal MSA — one doc for all products</td>
           <td>Multi-doc stack</td>
           <td>Layered (MCSA + Schedules)</td>
           <td>Layered (ToS + CDPA + SST)</td>
@@ -316,1411 +581,173 @@
           <td>Multi-doc stack</td>
         </tr>
         <tr>
-          <td>Data Ownership / Use</td>
-          <td>Customer owns Customer Content; Workday uses it <strong>only to provide the Service</strong> (Cl. 3(a)). Customer owns all Outputs (Amendment). No training of external models on Customer Content.</td>
-          <td>Customer owns Content + Outputs; no training (commercial)</td>
-          <td>Customer owns Content; hard prohibition on training</td>
-          <td>Customer retains IP; AI/ML use not explicit</td>
-          <td>Customer owns Input + Output; no training (contractual)</td>
-          <td>Customer owns Customer Data</td>
-          <td>Customer owns Your Content; no training for external use (policy)</td>
+          <td>No training on customer data</td>
+          <td class="wday-col"><span class="check">✅ Contractual</span> (MSA Cl. 3(a) + Amendment)</td>
+          <td><span class="check">✅</span> API/Enterprise only — consumer plans train by default</td>
+          <td><span class="check">✅ Hard contractual prohibition</span></td>
+          <td><span class="warn-text">⚠ Not explicit in base terms</span></td>
+          <td><span class="check">✅ Contractual</span></td>
+          <td><span class="check">✅</span></td>
+          <td><span class="check">✅ Policy-based</span></td>
         </tr>
         <tr>
-          <td>Liability Cap</td>
-          <td>12-mo. (General); <strong>24-mo.</strong> for confidentiality/security/privacy breach. <strong>Cl. 8.3 remediation excluded from cap.</strong></td>
-          <td>12 mo. fees (no floor)</td>
-          <td>1x general; <strong>2x breach</strong></td>
-          <td>12 mo. fees (no floor)</td>
-          <td>12 mo. fees</td>
-          <td>1x general; <strong>2x data protection</strong></td>
-          <td>12 mo. fees</td>
+          <td>Breach remediation coverage</td>
+          <td class="wday-col"><span class="check">✅ Outside cap</span> — forensics, notifications, credit monitoring, call center (Cl. 8.3)</td>
+          <td><span class="cross">❌ None</span></td>
+          <td><span class="cross">❌ None</span></td>
+          <td><span class="cross">❌ None</span></td>
+          <td><span class="cross">❌ None</span></td>
+          <td><span class="cross">❌ None</span></td>
+          <td><span class="cross">❌ None</span></td>
         </tr>
         <tr>
-          <td>Breach Remediation Coverage</td>
-          <td><span class="check">✅ Cl. 8.3 — forensics, notifications, credit monitoring (1 yr), call center (1 yr); outside cap</span></td>
-          <td><span class="cross">❌ No</span></td>
-          <td><span class="cross">❌ No</span></td>
-          <td><span class="cross">❌ No</span></td>
-          <td><span class="cross">❌ No</span></td>
-          <td><span class="cross">❌ No</span></td>
-          <td><span class="cross">❌ No</span></td>
-        </tr>
-        <tr>
-          <td>Breach Notification SLA</td>
-          <td><strong>48 hours</strong> or shorter if required by Law (Cl. 5.3)</td>
+          <td>Breach notification SLA</td>
+          <td class="wday-col"><strong>48 hours</strong> — contractual</td>
           <td>48 hours (DPA)</td>
           <td>3 business days</td>
           <td><span class="warn-text">"Without undue delay"</span></td>
           <td><span class="warn-text">"Without undue delay"</span></td>
-          <td>72 hours (DPA) — <span class="warn-text">violated in 2024</span></td>
+          <td>72 hours (DPA) — <span class="warn-text">took 45 days in 2024</span></td>
           <td>Varies</td>
         </tr>
         <tr>
+          <td>Liability cap (security/privacy breach)</td>
+          <td class="wday-col"><strong>24-month</strong> enhanced cap + remediation outside cap</td>
+          <td>12-month (no floor)</td>
+          <td>2x fees (Super Cap)</td>
+          <td>12-month</td>
+          <td>12-month</td>
+          <td>2x fees (data protection)</td>
+          <td>12-month</td>
+        </tr>
+        <tr>
+          <td>Customer owns AI outputs</td>
+          <td class="wday-col"><span class="check">✅ Explicit in Universal Amendment</span></td>
+          <td><span class="check">✅ Contractual</span></td>
+          <td><span class="check">✅ Contractual</span></td>
+          <td><span class="warn-text">⚠ Not explicit in base terms</span></td>
+          <td><span class="check">✅ Contractual</span></td>
+          <td><span class="check">✅</span></td>
+          <td><span class="check">✅ Policy-based</span></td>
+        </tr>
+        <tr>
           <td>Default SLA</td>
-          <td><span class="check">✅ SLA per Product Terms; 10%/20%/30% credits for 2nd/3rd/4th Failure (Cl. 10.13)</span></td>
+          <td class="wday-col"><span class="check">✅ Per Product Terms; tiered credits for repeat failures</span></td>
+          <td><span class="cross">❌ None — AS IS / AS AVAILABLE</span></td>
+          <td><span class="check">✅ 99.9%</span></td>
+          <td><span class="check">✅ Per-service (99.9–99.999%)</span></td>
           <td><span class="cross">❌ None standard</span></td>
-          <td>99.9% (AWS/GCP)</td>
-          <td>Per-service (99.9–99.999%)</td>
-          <td><span class="cross">❌ None standard</span></td>
-          <td>99.9% (Ent.); 99.99% (Biz Crit.)</td>
-          <td>Per-service</td>
+          <td><span class="check">✅ 99.9% / 99.99% (Biz Crit.)</span></td>
+          <td><span class="check">✅ Per-service</span></td>
         </tr>
         <tr>
-          <td>IP Indemnification</td>
-          <td>Workday defends/indemnifies for IP claims re Service use (Cl. 7.1)</td>
-          <td>Yes (excl. consumer)</td>
-          <td>Yes + <strong>GenAI uncapped</strong></td>
-          <td>Yes + <strong>GenAI output + training</strong></td>
-          <td>Yes — <strong>Copyright Shield, uncapped</strong></td>
-          <td>Yes (U.S. only)</td>
-          <td>Yes</td>
-        </tr>
-        <tr>
-          <td>Data Portability</td>
-          <td><span class="check">✅ 60-day Retrieval; machine-readable format (Cl. 9.2); up to 3-mo. Transition (Cl. 9.3)</span></td>
-          <td><span class="cross">❌ No structured mechanism</span></td>
-          <td><span class="check">✅ Strong (Delta Lake open format)</span></td>
-          <td><span class="check">✅ Free Cloud Exit program</span></td>
-          <td><span class="cross">❌ No structured mechanism</span></td>
-          <td>Limited (30-day self-service)</td>
-          <td>Standard</td>
-        </tr>
-        <tr>
-          <td>Mid-Contract Changes</td>
-          <td><span class="check">Product Terms: no material decrease; changes not effective until <strong>30 days after publication</strong> (Amendment §11)</span></td>
+          <td>Mid-contract term changes</td>
+          <td class="wday-col"><span class="check">30-day notice; no material decrease in security/privacy/SLA</span></td>
           <td>Via policy updates</td>
           <td>Via URL docs (PayGo)</td>
           <td>30 days' notice</td>
           <td>14 days' pricing notice</td>
-          <td><span class="cross">⚠️ Yes — URL incorporation</span></td>
+          <td><span class="warn-text">⚠ URL incorporation</span></td>
           <td>Continued use = acceptance</td>
         </tr>
         <tr>
-          <td>HIPAA BAA</td>
-          <td><span class="check">✅ Yes (Business Associate Exhibit)</span></td>
-          <td><span class="check">✅ Sales-assisted</span></td>
-          <td><span class="check">✅ Enterprise</span></td>
-          <td><span class="check">✅ Separately executed</span></td>
-          <td><span class="check">✅ Sales-assisted</span></td>
-          <td><span class="check">✅ Business Critical+</span></td>
-          <td><span class="check">✅ Yes</span></td>
-        </tr>
-        <tr>
-          <td>Customer-Managed Keys</td>
-          <td>Per Security Exhibit / Product Terms</td>
-          <td>Enterprise (BYOK via ZDR)</td>
-          <td><span class="check">✅ Enterprise</span></td>
-          <td><span class="check">✅ Cloud KMS</span></td>
-          <td><span class="check">✅ Enterprise (EKM)</span></td>
-          <td><span class="check">✅ Business Critical (Tri-Secret)</span></td>
-          <td><span class="check">✅ KMS</span></td>
+          <td>Data portability on termination</td>
+          <td class="wday-col"><span class="check">✅ 60-day retrieval; machine-readable; up to 3-mo. transition</span></td>
+          <td><span class="cross">❌ No structured mechanism</span></td>
+          <td><span class="check">✅ Delta Lake open format</span></td>
+          <td><span class="check">✅ Free Cloud Exit program</span></td>
+          <td><span class="cross">❌ No structured mechanism</span></td>
+          <td>30-day self-service</td>
+          <td>Standard</td>
         </tr>
       </tbody>
     </table>
   </div>
-</section>
 
-<!-- ============================================================ DIFFERENTIATORS -->
-<section class="comparison-section" id="differentiators">
-  <h2>Key Workday uMSA Differentiators</h2>
-  <div class="sub">What sets Workday apart vs. oCIO vendor agreements (based on Universal MSA and Universal Amendment)</div>
-  <div class="diff-grid">
-    <div class="diff-card">
-      <h4>🛡️ Breach Remediation Carveout (Clause 8.3)</h4>
-      <p>Only Workday contractually commits to pay <em>reasonable and documented costs</em> for forensic investigation, breach notifications, credit monitoring (1 year), and call center (1 year) when unauthorized disclosure is caused by Workday’s breach of its security, privacy, or data protection obligations. These obligations are <strong>excluded from the liability cap</strong> (Cl. 8.1(D)). No other vendor in this set does this.</p>
-    </div>
-    <div class="diff-card">
-      <h4>⏱️ 48-Hour Breach Notification (Clause 5.3)</h4>
-      <p>Workday commits to notify <strong>within 48 hours or any shorter period required by Law</strong> upon awareness of a Security Breach, and to conduct a root cause analysis and share results and remediation plan upon request. Snowflake has 72-hour DPA commitment but <strong>took 45 days</strong> in 2024; GCP and OpenAI use undefined "without undue delay."</p>
-    </div>
-    <div class="diff-card">
-      <h4>📄 Single Universal MSA for All Products</h4>
-      <p>One agreement (Order Form + MSA + Security Exhibit + DPE + Product Terms) covers all Workday products; Order Form takes precedence (Cl. 10.14). Competitors use layered, multi-document stacks with URL-incorporated documents that can change mid-contract.</p>
-    </div>
-    <div class="diff-card">
-      <h4>🔐 Customer Content Only to Provide the Service; Customer Owns Outputs</h4>
-      <p>MSA Cl. 3(a): Workday has the right to use Customer Content <strong>only to provide the Service</strong>. Amendment: Customer owns all Outputs from AI Systems; Workday does not use Customer Content to train external AI/ML models — a clear, contract-level commitment vs. tier-dependent or policy-based “no training” elsewhere.</p>
-    </div>
-    <div class="diff-card">
-      <h4>🔍 Security Exhibit and Audit Reports</h4>
-      <p>Security program conforms to the Security Exhibit and Audit Reports; Workday makes Audit Reports available via self-service or upon written request. No update may materially decrease protections during the Term (Cl. 5.1; Amendment §5). Replaces per-customer audit negotiation.</p>
-    </div>
-    <div class="diff-card">
-      <h4>📋 Predictable Product Terms (30-Day Notice)</h4>
-      <p>Product Terms may not materially decrease security/privacy commitments; changes do not become effective until <strong>30 days after publication</strong> (MSA definition; Amendment §11). Contrast with vendors that incorporate terms by URL with no minimum notice before material changes.</p>
-    </div>
-    <div class="diff-card">
-      <h4>📤 Retrieval and Transition</h4>
-      <p>Up to <strong>60 days</strong> at no cost to retrieve Customer Content in <strong>machine-readable format</strong> (Cl. 9.2). Optional <strong>up to 3 months</strong> Transition Period after termination if requested before termination (Cl. 9.3).</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================ ANTHROPIC -->
-<section class="vendor-section" id="anthropic">
-  <div class="vendor-header" style="background: linear-gradient(135deg, #92400e, #d97706)">
-    <div>
-      <h2>Anthropic</h2>
-      <div class="vendor-desc">Claude API · Claude Enterprise · Claude for Work</div>
-    </div>
-  </div>
-  <div class="vendor-body">
-    <div class="tabs">
-      <button class="tab active" onclick="showTab(this,'anthropic-structure')">Agreement Structure</button>
-      <button class="tab" onclick="showTab(this,'anthropic-liability')">Liability</button>
-      <button class="tab" onclick="showTab(this,'anthropic-data')">Data & Privacy</button>
-      <button class="tab" onclick="showTab(this,'anthropic-security')">Security</button>
-      <button class="tab" onclick="showTab(this,'anthropic-breach')">Breach Notification</button>
-      <button class="tab" onclick="showTab(this,'anthropic-ip')">IP & Indemnification</button>
-      <button class="tab" onclick="showTab(this,'anthropic-termination')">Termination & Portability</button>
-      <button class="tab" onclick="showTab(this,'anthropic-sla')">SLA / Uptime</button>
-      <button class="tab" onclick="showTab(this,'anthropic-tiers')">Enterprise vs. API</button>
-      <button class="tab" onclick="showTab(this,'anthropic-gotchas')">⚠️ Key Gotchas</button>
-    </div>
-
-    <div class="tab-content active" id="anthropic-structure">
-      <h3>Document Stack</h3>
-      <table>
-        <thead><tr><th>Document</th><th>How Incorporated</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Commercial Terms of Service (CToS)</strong></td><td>Master document</td><td>anthropic.com/legal/commercial-terms</td></tr>
-          <tr><td>Usage Policy</td><td>By reference in CToS</td><td>Sets permissible use boundaries</td></tr>
-          <tr><td>Data Processing Addendum (DPA)</td><td>Auto-incorporated at CToS acceptance</td><td>Includes EU SCCs Modules 2 &amp; 3, UK/Swiss addenda</td></tr>
-          <tr><td>Supported Regions Policy</td><td>By reference</td><td></td></tr>
-          <tr><td>Service Specific Terms</td><td>By reference</td><td>Model/product-specific terms</td></tr>
-          <tr><td>Subprocessor List</td><td>Referenced in DPA</td><td>Live list at anthropic.com/subprocessors; 15-day notice of changes</td></tr>
-        </tbody>
-      </table>
-      <h3 style="margin-top:20px">Optional / Add-On (require sales)</h3>
-      <table>
-        <thead><tr><th>Instrument</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td>Zero Data Retention (ZDR) Addendum</td><td>Eligible API endpoints only — not Claude.ai chat products</td></tr>
-          <tr><td>Business Associate Agreement (BAA)</td><td>HIPAA-eligible Enterprise only; not self-serve</td></tr>
-          <tr><td>Custom Enterprise Agreement</td><td>Sales-assisted; custom contracts, pricing, SLAs</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>⚠️ Critical:</strong> Claude Pro and Team plans are classified as <em>consumer</em> accounts. Employees using personal Claude accounts are subject to training by default as of September 28, 2025 — a shadow IT risk requiring active governance.</p>
-      </div>
-      <h3 style="margin-top:20px">Product Tier Distinctions</h3>
-      <table>
-        <thead><tr><th>Tier</th><th>Training Default</th><th>BAA</th><th>ZDR</th></tr></thead>
-        <tbody>
-          <tr><td>API (Commercial Terms)</td><td>❌ No training</td><td>✅ (with ZDR, via sales)</td><td>✅ (approval required)</td></tr>
-          <tr><td>Claude Enterprise</td><td>❌ No training</td><td>✅ (sales-assisted only)</td><td>✅ (via API key)</td></tr>
-          <tr><td>Claude for Work (Team)</td><td>❌ No training</td><td>❌ No</td><td>❌ No</td></tr>
-          <tr><td>Claude Pro/Max</td><td>⚠️ Training ON by default</td><td>❌ No</td><td>❌ No</td></tr>
-          <tr><td>Amazon Bedrock / Vertex AI</td><td>❌ No training</td><td>Via cloud provider</td><td>Via cloud provider</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="anthropic-liability">
-      <h3>Liability Cap</h3>
-      <p>Fees paid to Anthropic in the <strong>previous 12 months</strong>. No minimum floor — for early deployments, this cap can be very low.</p>
-      <h3 style="margin-top:20px">Excluded Damages (Mutual)</h3>
-      <p>Consequential, incidental, special, indirect, or exemplary damages — including lost profits, business, revenue, goodwill, production, anticipated savings, or data.</p>
-      <h3 style="margin-top:20px">Carveouts (Cap Does NOT Apply)</h3>
-      <table>
-        <thead><tr><th>Carveout</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td>Indemnification obligations</td><td>IP and third-party claims indemnity sits outside the cap</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>⚠️ AI-specific liability shift:</strong> Anthropic contractually requires customers to notify users that outputs "may be false, incomplete, misleading or not reflective of recent events." Hallucination-related downstream harm is fully on the customer. No accuracy warranty, no indemnification for AI error.</p>
-      </div>
-      <p style="margin-top:12px"><strong>Dispute resolution:</strong> Mandatory arbitration — Dublin (EEA/UK) or San Francisco (all others). Mutual jury trial and class action waivers.</p>
-    </div>
-
-    <div class="tab-content" id="anthropic-data">
-      <h3>Data Ownership</h3>
-      <p>"As between the Parties…Anthropic agrees that <strong>Customer owns all Outputs</strong>, and Anthropic disclaims any rights it receives to Customer Content." Customer owns both inputs and outputs.</p>
-      <h3 style="margin-top:20px">Model Training by Tier</h3>
-      <table>
-        <thead><tr><th>Tier</th><th>Default</th><th>How to Change</th></tr></thead>
-        <tbody>
-          <tr><td>API / Enterprise</td><td>❌ No training</td><td>Opt-in via Development Partner Program only</td></tr>
-          <tr><td>Claude.ai Free/Pro/Max</td><td>⚠️ Training ON</td><td>Opt-out via Privacy Settings</td></tr>
-          <tr><td>Team plan</td><td>❌ No training</td><td>Opt-in only</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>Feedback exception:</strong> Thumbs-up/down ratings retain the full conversation for up to <strong>5 years</strong> for training (de-linked from user ID). Org admins on Team/Enterprise can disable this feature entirely.</p>
-      </div>
-      <div class="highlight-box warn">
-        <p><strong>Safety classifier exception:</strong> Even ZDR customers have safety classifier results retained by Anthropic — non-negotiable and cannot be opted out of.</p>
-      </div>
-      <h3 style="margin-top:20px">Data Retention</h3>
-      <p>Conversations not retained beyond processing for commercial API/Enterprise customers without ZDR. DPA requires deletion or return of customer personal data within <strong>30 days</strong> of agreement termination. Subprocessors receive 15 days' advance notice before new additions.</p>
-    </div>
-
-    <div class="tab-content" id="anthropic-security">
-      <h3>Certifications</h3>
-      <table>
-        <thead><tr><th>Certification</th><th>Scope</th></tr></thead>
-        <tbody>
-          <tr><td>SOC 2 Type II</td><td>Commercial products (API, Claude Enterprise) — not consumer</td></tr>
-          <tr><td>ISO 27001:2022</td><td>Commercial products</td></tr>
-          <tr><td>ISO/IEC 42001:2023</td><td>AI Management Systems (industry-first)</td></tr>
-          <tr><td>CSA STAR Level 2</td><td>Commercial products</td></tr>
-          <tr><td>HIPAA-Ready</td><td>Requires BAA + specific configuration</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>Consumer products (Free/Pro/Max) are NOT covered by any of these certifications.</strong></p>
-      </div>
-      <h3 style="margin-top:20px">Contractual Security Controls (DPA)</h3>
-      <table>
-        <thead><tr><th>Control</th><th>Standard</th></tr></thead>
-        <tbody>
-          <tr><td>Encryption at rest</td><td>AES-256 minimum</td></tr>
-          <tr><td>Encryption in transit</td><td>TLS 1.2+</td></tr>
-          <tr><td>Access controls</td><td>MFA, RBAC, SSO, unique identifiers per employee</td></tr>
-          <tr><td>Penetration testing</td><td>Annual third-party</td></tr>
-          <tr><td>Audits</td><td>Annual third-party; customers may audit annually (customer bears cost)</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="anthropic-breach">
-      <h3>Contractual Timeline</h3>
-      <div class="highlight-box info">
-        <p>DPA commits Anthropic to notify customers within <strong>48 hours</strong> of discovering a security breach affecting Customer Personal Data.</p>
-      </div>
-      <h3 style="margin-top:20px">Real-World Performance (GTG-1002 Incident, Sept.–Nov. 2025)</h3>
-      <table>
-        <thead><tr><th>Event</th><th>Timeline</th></tr></thead>
-        <tbody>
-          <tr><td>Breach detected</td><td>Mid-September 2025</td></tr>
-          <tr><td>Contained / accounts banned</td><td>~10 days after detection</td></tr>
-          <tr><td>Public disclosure</td><td>November 13, 2025 (~2 months later)</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>⚠️ Coverage gaps:</strong> No contractual obligation to cover remediation costs, credit monitoring, or forensic investigation expenses in standard terms. Customer must also "promptly notify Anthropic" of suspected account compromise — notification runs both directions.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="anthropic-ip">
-      <h3>Anthropic's IP Indemnification (effective Jan. 1, 2024)</h3>
-      <p>Defends customers against third-party claims that authorized use of the Services or their Outputs infringes IP rights, covering damages and approved settlements.</p>
-      <h3 style="margin-top:20px">Exclusions from Indemnity</h3>
-      <ul style="padding-left:20px; color:#334155">
-        <li>Customer modifications to Anthropic systems</li>
-        <li>Combinations where the combination (not the Service) is the infringement source</li>
-        <li>Customer-provided inputs that themselves infringe</li>
-        <li>Trademark violations in customer's use</li>
-        <li>Unauthorized use / Usage Policy violations</li>
-        <li>Free/non-paying users</li>
-      </ul>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>Bartz v. Anthropic settlement (2025) — $1.5B:</strong> Settlement does NOT release claims for <em>infringing outputs</em>. If Claude reproduces copyrighted text verbatim, that remains independently actionable even for works covered in the settlement. Enterprise procurement teams should demand explicit representations about training data provenance.</p>
-      </div>
-      <p style="margin-top:12px"><strong>No hallucination indemnity:</strong> Zero indemnification for downstream harm from inaccurate AI outputs.</p>
-    </div>
-
-    <div class="tab-content" id="anthropic-termination">
-      <h3>Termination Rights</h3>
-      <table>
-        <thead><tr><th>Party</th><th>Trigger</th><th>Notice</th></tr></thead>
-        <tbody>
-          <tr><td>Either party (convenience)</td><td>Any reason (Anthropic must give 30 days)</td><td>30 days from Anthropic</td></tr>
-          <tr><td>Either party (breach)</td><td>Material breach</td><td>30-day cure period</td></tr>
-          <tr><td>Anthropic (immediate)</td><td>Legal prohibition or third-party vendor termination</td><td>None required</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>⚠️ Suspension without notice:</strong> Anthropic may suspend access for policy violations, legal prohibition, or third-party vendor termination with no minimum notice period or cure window — a meaningful business continuity risk for production deployments.</p>
-      </div>
-      <h3 style="margin-top:20px">Data After Termination</h3>
-      <p>DPA requires return or deletion of Customer Personal Data within <strong>30 days</strong>. However, there is <strong>no structured data export mechanism</strong> in standard terms — no specified format, no transition period, no migration assistance. Enterprise customers should negotiate portability provisions.</p>
-    </div>
-
-    <div class="tab-content" id="anthropic-sla">
-      <table>
-        <thead><tr><th>Tier</th><th>SLA</th><th>Credits</th></tr></thead>
-        <tbody>
-          <tr><td>Standard API</td><td>❌ None — "AS IS / AS AVAILABLE"</td><td>❌ None</td></tr>
-          <tr><td>Priority Tier</td><td>⚠️ Targets 99.5% (aspirational, not binding)</td><td>Not automatic</td></tr>
-          <tr><td>Sales-Assisted Enterprise</td><td>✅ Negotiable</td><td>Negotiable</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>No published service credit schedule.</strong> Unlike AWS, Azure, and GCP, Anthropic does not publish a standard credit structure. An independent analysis noted 84% uptime periods with $0 compensation — illustrating the real-world risk of the AS-IS disclaimer.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="anthropic-tiers">
-      <table>
-        <thead><tr><th>Dimension</th><th>API (Commercial)</th><th>Claude Enterprise (Sales)</th></tr></thead>
-        <tbody>
-          <tr><td>Contract</td><td>Standard CToS (click-through)</td><td>Custom contract + CToS baseline</td></tr>
-          <tr><td>Pricing</td><td>Token-based (usage only)</td><td>Per-seat access fee + usage at API rates</td></tr>
-          <tr><td>ZDR</td><td>Available (approval required)</td><td>Available</td></tr>
-          <tr><td>BAA/HIPAA</td><td>Available (sales only)</td><td>Available — legacy BAAs pre-Dec 2025 must be renegotiated</td></tr>
-          <tr><td>SSO/SCIM</td><td>❌ Not included</td><td>✅ Included</td></tr>
-          <tr><td>Audit logs</td><td>❌ Not included</td><td>✅ Included</td></tr>
-          <tr><td>SLA</td><td>None (Priority: target 99.5%)</td><td>Negotiable</td></tr>
-          <tr><td>Context window</td><td>Model-standard</td><td>500K tokens (Sonnet 4.6 chat), 1M (Claude Code)</td></tr>
-          <tr><td>Connectors</td><td>❌ No</td><td>✅ Google, M365, Slack, GitHub</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="anthropic-gotchas">
+  <div class="section-label">Vendor watch-outs for sales conversations</div>
+  <div class="gotcha-grid">
+    <div class="gotcha-card">
+      <div class="vendor-name" style="color:#d97706">Anthropic</div>
       <ul class="gotcha-list">
-        <li><strong>No default SLA</strong> — "AS IS / AS AVAILABLE" disclaimer; dramatic gap vs. traditional enterprise SaaS</li>
-        <li><strong>Liability cap tied to trailing fees with no floor</strong> — a 3-month-old customer with a major breach has a cap based on only 3 months of fees</li>
-        <li><strong>Immediate suspension without notice</strong> — policy violations or third-party vendor termination can suspend access instantly</li>
-        <li><strong>No data portability mechanism</strong> — no structured export format, no transition period on termination</li>
-        <li><strong>Bartz settlement output-infringement gap</strong> — $1.5B settlement didn't release output claims; Claude reproducing copyrighted text is still independently actionable</li>
-        <li><strong>Safety classifier retention survives ZDR</strong> — not truly zero data; compliance implications for strict-zero customers</li>
-        <li><strong>Hallucination risk fully on customer</strong> — no accuracy warranty; CToS affirmatively places this risk on the customer</li>
-        <li><strong>Competing use prohibition</strong> — can't use Services to train competing AI models; broader than typical SaaS</li>
-        <li><strong>Consumer plans misused by enterprises</strong> — Pro/Team = consumer accounts; training ON by default since Sept. 28, 2025</li>
-        <li><strong>Legacy BAA invalidation</strong> — API BAAs signed before Dec. 2, 2025 don't extend to Claude.ai Enterprise</li>
-        <li><strong>Model deprecation with no notice commitment</strong> — version deprecations not contractually controlled in standard terms</li>
-        <li><strong>Jury trial and class action waivers</strong> — mandatory arbitration limits dispute resolution options</li>
+        <li>No default SLA — "AS IS / AS AVAILABLE" for standard API</li>
+        <li>Consumer plans (Pro/Team) training ON by default as of Sept. 28, 2025 — shadow IT risk</li>
+        <li>Immediate suspension without notice for policy violations</li>
+        <li>No structured data export mechanism on termination</li>
+        <li>Bartz v. Anthropic ($1.5B settlement) did not release output infringement claims</li>
+        <li>Hallucination liability fully on the customer</li>
       </ul>
     </div>
-  </div>
-</section>
-
-<!-- ============================================================ DATABRICKS -->
-<section class="vendor-section" id="databricks">
-  <div class="vendor-header" style="background: linear-gradient(135deg, #9f1239, #e11d48)">
-    <div>
-      <h2>Databricks</h2>
-      <div class="vendor-desc">Master Cloud Services Agreement (MCSA) · AWS / Azure / GCP</div>
-    </div>
-  </div>
-  <div class="vendor-body">
-    <div class="tabs">
-      <button class="tab active" onclick="showTab(this,'db-structure')">Agreement Structure</button>
-      <button class="tab" onclick="showTab(this,'db-liability')">Liability</button>
-      <button class="tab" onclick="showTab(this,'db-data')">Data &amp; Privacy</button>
-      <button class="tab" onclick="showTab(this,'db-security')">Security</button>
-      <button class="tab" onclick="showTab(this,'db-breach')">Breach Notification</button>
-      <button class="tab" onclick="showTab(this,'db-ip')">IP &amp; Indemnification</button>
-      <button class="tab" onclick="showTab(this,'db-termination')">Termination &amp; Portability</button>
-      <button class="tab" onclick="showTab(this,'db-sla')">SLA / Uptime</button>
-      <button class="tab" onclick="showTab(this,'db-tiers')">Enterprise vs. Standard</button>
-      <button class="tab" onclick="showTab(this,'db-gotchas')">⚠️ Key Gotchas</button>
-    </div>
-
-    <div class="tab-content active" id="db-structure">
-      <table>
-        <thead><tr><th>Document</th><th>Role</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Master Cloud Services Agreement (MCSA)</strong></td><td>Governing framework; all general terms, liability, confidentiality</td></tr>
-          <tr><td>Platform Services Schedule</td><td>SLA, workspace terms, availability commitments for AWS/GCP</td></tr>
-          <tr><td>Service Specific Terms</td><td>Per-product (GenAI, Mosaic AI, Delta Sharing, etc.)</td></tr>
-          <tr><td>Order Form</td><td>Commercial terms, quantities, pricing</td></tr>
-          <tr><td>Security Addendum</td><td>Contractually committed security controls, certifications, breach notification</td></tr>
-          <tr><td>Data Processing Addendum (DPA)</td><td>GDPR/CCPA processor obligations, SCCs, subprocessors</td></tr>
-          <tr><td>External Use Schedule</td><td>Terms for customer-built apps exposing Databricks to end users</td></tr>
-          <tr><td>US Public Sector Services Schedule</td><td>FedRAMP-specific terms</td></tr>
-          <tr><td>BAA</td><td>Required separately for HIPAA/PHI workloads</td></tr>
-        </tbody>
-      </table>
-      <p style="margin-top:12px"><strong>Precedence:</strong> (1) Order Form → (2) Service Specific Terms → (3) MCSA.</p>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>PayGo customers:</strong> Databricks may unilaterally modify the MCSA and pricing; continued use = consent. Only enterprise Order Form customers are protected from unilateral changes.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="db-liability">
-      <table>
-        <thead><tr><th>Claim Type</th><th>Cap</th></tr></thead>
-        <tbody>
-          <tr><td><strong>General liability</strong></td><td>1x fees paid in prior 12 months</td></tr>
-          <tr><td><strong>Data breach (unauthorized disclosure)</strong></td><td><strong>2x fees paid in prior 12 months</strong> — Super Cap</td></tr>
-          <tr><td>IP indemnification</td><td>Uncapped</td></tr>
-          <tr><td>GenAI Claims</td><td>Explicitly stated as NOT subject to any damages cap</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box info" style="margin-top:16px">
-        <p><strong>Notable:</strong> The 2x Super Cap for data breaches is a meaningful departure from standard SaaS. Most competitors cap breach liability at the same 1x general cap or lower. Caps are non-cumulative — if both apply, the maximum is the Super Cap.</p>
-      </div>
-      <h3 style="margin-top:20px">Consequential Damages Exclusion</h3>
-      <p>Explicitly includes "loss or corruption of data" — Databricks accepts no liability for data loss beyond the General Cap even from its own negligence. For a data platform, this is a significant term.</p>
-      <p style="margin-top:8px"><strong>Insurance:</strong> Databricks contractually commits to maintaining cyber liability insurance rated A-IX or better; certificates available on request.</p>
-    </div>
-
-    <div class="tab-content" id="db-data">
-      <h3>Data Ownership</h3>
-      <p>"Customer retains all right, title and interest in and to the Customer Content and Customer Materials." Includes Inputs and Outputs (GenAI).</p>
-      <h3 style="margin-top:20px">Model Training Prohibition (Hard)</h3>
-      <div class="highlight-box" style="margin-top:8px">
-        <p>"Databricks shall not use Customer Content, Inputs, or Outputs to train, re-train, or fine-tune GenAI Models that Databricks makes available for use by third parties." This is a hard contractual prohibition, not a policy statement.</p>
-      </div>
-      <h3 style="margin-top:20px">Usage Data Rights</h3>
-      <p>Databricks may collect aggregated/anonymized metadata about platform use to improve products. Cannot share with third parties unless fully anonymized. No opt-out available in standard terms.</p>
-      <h3 style="margin-top:20px">Data Residency</h3>
-      <p>Supports region-specific deployments on AWS, Azure, and GCP. Customers can configure workspaces in specific cloud regions to meet data residency requirements.</p>
-    </div>
-
-    <div class="tab-content" id="db-security">
-      <h3>Certifications</h3>
-      <table>
-        <thead><tr><th>Certification</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>SOC 2 Type II</td><td>✅ Ongoing</td></tr>
-          <tr><td>ISO 27001 / 27017 / 27018 / 27701</td><td>✅ Certified</td></tr>
-          <tr><td>FedRAMP Moderate</td><td>✅ Authorized (AWS, 2022)</td></tr>
-          <tr><td>FedRAMP High</td><td>✅ Agency ATO on AWS GovCloud (~Mar. 2025)</td></tr>
-          <tr><td>HITRUST CSF</td><td>✅ Certified for Azure Databricks</td></tr>
-          <tr><td>HIPAA</td><td>✅ Via BAA + Compliance Security Profile</td></tr>
-          <tr><td>PCI-DSS</td><td>✅ Supported in PCI Permitted Workspaces (limitations apply)</td></tr>
-        </tbody>
-      </table>
-      <h3 style="margin-top:20px">Vulnerability Remediation SLAs (Contractual)</h3>
-      <table>
-        <thead><tr><th>Severity</th><th>Remediation Window</th></tr></thead>
-        <tbody>
-          <tr><td>Critical</td><td><strong>14 days</strong></td></tr>
-          <tr><td>High</td><td>30 days</td></tr>
-          <tr><td>Medium</td><td>60 days</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="db-breach">
-      <div class="highlight-box info">
-        <p>Security Addendum commits to notification within <strong>3 business days</strong> of becoming aware of a confirmed Security Breach.</p>
-      </div>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ GDPR gap:</strong> 3 business days ≠ 72 calendar hours. A Thursday breach may not be reported until the following Wednesday — potentially exceeding the GDPR 72-hour supervisory authority clock. Enterprise customers should negotiate calendar-day notification.</p>
-      </div>
-      <h3 style="margin-top:20px">Remediation Coverage</h3>
-      <p>The 2x Super Cap is the primary financial remedy for security breaches. No specific remediation fund or breach expense coverage beyond the Super Cap structure.</p>
-    </div>
-
-    <div class="tab-content" id="db-ip">
-      <h3>Databricks IP Indemnification</h3>
-      <p>Defends against third-party claims that the Platform Services infringe IP rights. Coverage is <strong>uncapped</strong> (excluded from general liability cap).</p>
-      <h3 style="margin-top:16px">Carve-outs</h3>
-      <ul style="padding-left:20px; color:#334155">
-        <li>Open-source Apache Spark layer (notable — Spark is the core compute engine)</li>
-        <li>Combinations with non-Databricks equipment/software</li>
-        <li>Use outside documentation</li>
-      </ul>
-      <h3 style="margin-top:16px">GenAI IP Indemnity</h3>
-      <div class="highlight-box info">
-        <p>Separate indemnity for claims that AI Outputs infringe third-party IP. <strong>Uncapped.</strong> Stated as the "sole and exclusive remedy" for AI output IP claims — a notable AI-specific provision with no general liability cap ceiling.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="db-termination">
-      <h3>Termination Rights</h3>
-      <p>Either party: 30 days' written notice (no active orders); either party for material breach (30-day cure).</p>
-      <h3 style="margin-top:16px">Data After Termination</h3>
-      <div class="highlight-box warn">
-        <p><strong>All Customer Content deleted within 30 days of workspace cancellation. No guaranteed post-termination read-only access period.</strong> Customers must export data before workspace cancellation or lose it.</p>
-      </div>
-      <h3 style="margin-top:16px">Portability Strength — Best in Class</h3>
-      <div class="highlight-box">
-        <p><strong>✅ Delta Lake advantage:</strong> Databricks is built on Delta Lake (Apache-licensed open format). Data is inherently portable and readable without Databricks software. This is a meaningful structural portability advantage vs. all other vendors reviewed.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="db-sla">
-      <table>
-        <thead><tr><th>Platform</th><th>Monthly Uptime SLA</th></tr></thead>
-        <tbody>
-          <tr><td>AWS &amp; GCP</td><td><strong>99.9%</strong></td></tr>
-          <tr><td>Azure Databricks</td><td><strong>99.95%</strong> (governed by Microsoft Azure SLA)</td></tr>
-        </tbody>
-      </table>
-      <h3 style="margin-top:16px">Service Credit Tiers (AWS/GCP)</h3>
-      <table>
-        <thead><tr><th>Monthly Uptime</th><th>Credit</th></tr></thead>
-        <tbody>
-          <tr><td>99.0% – 99.9%</td><td>10% of monthly fees</td></tr>
-          <tr><td>Below 99.0%</td><td>25% of monthly fees</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>SLA measured in aggregate</strong> across all workspaces in the customer account. A single critical workspace can be down for extended periods without triggering credits if aggregate uptime holds.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="db-tiers">
-      <table>
-        <thead><tr><th>Dimension</th><th>Pay-as-you-go</th><th>Enterprise (Order Form)</th></tr></thead>
-        <tbody>
-          <tr><td>MCSA modifications</td><td>Databricks may modify unilaterally; use = consent</td><td>Protected for Order term</td></tr>
-          <tr><td>Liability</td><td>Standard 1x cap only</td><td>2x Super Cap for data breach</td></tr>
-          <tr><td>Security Addendum</td><td>Not contractually binding</td><td>✅ Contractually binding with vuln SLAs</td></tr>
-          <tr><td>BAA (HIPAA)</td><td>❌ Not available</td><td>✅ Available</td></tr>
-          <tr><td>FedRAMP</td><td>❌ No</td><td>✅ Via US Public Sector Schedule</td></tr>
-          <tr><td>Insurance certificates</td><td>Not available</td><td>Available on request</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="db-gotchas">
+    <div class="gotcha-card">
+      <div class="vendor-name" style="color:#e11d48">Databricks</div>
       <ul class="gotcha-list">
-        <li><strong>PHI/PCI hard stop without configuration</strong> — processing PHI outside designated workspaces: Databricks disclaims all liability. Metadata fields (workspace names, tags, job names) are outside the compliance boundary</li>
-        <li><strong>Data loss explicitly excluded from consequential damages</strong> — no liability for data loss beyond General Cap even from Databricks' own negligence</li>
-        <li><strong>30-day data deletion with no post-termination read access</strong> — no grace period; export during active subscription or lose it</li>
-        <li><strong>Unilateral MCSA modifications for PayGo</strong> — no protection against changes</li>
-        <li><strong>Apache Spark open-source IP carveout</strong> — claims against Spark itself leave customers exposed (Spark is the core engine)</li>
-        <li><strong>Aggregate SLA measurement</strong> — single critical workspace can be down without triggering credits</li>
-        <li><strong>3 business days breach notification vs. GDPR 72-hour calendar clock</strong></li>
-        <li><strong>No published renewal price protection</strong> — effective discounts have been decreasing year over year</li>
-        <li><strong>Subprocessor notification is subscription-based</strong> — customers who miss signup aren't proactively notified of material changes</li>
+        <li>PayGo: Databricks can modify MCSA unilaterally — continued use = consent</li>
+        <li>Data loss explicitly excluded from consequential damages — even from Databricks negligence</li>
+        <li>30-day data deletion after termination — no grace period, no read-only access</li>
+        <li>Apache Spark open-source IP carveout — the core compute engine is not covered by IP indemnity</li>
+        <li>3 business days breach notification ≠ 72 calendar hours (GDPR gap)</li>
       </ul>
     </div>
-  </div>
-</section>
-
-<!-- ============================================================ GCP -->
-<section class="vendor-section" id="gcp">
-  <div class="vendor-header" style="background: linear-gradient(135deg, #1557b0, #1a73e8)">
-    <div>
-      <h2>GCP (Google Cloud Platform)</h2>
-      <div class="vendor-desc">Google Cloud Terms of Service · Cloud Data Processing Addendum · Service Specific Terms</div>
-    </div>
-  </div>
-  <div class="vendor-body">
-    <div class="tabs">
-      <button class="tab active" onclick="showTab(this,'gcp-structure')">Agreement Structure</button>
-      <button class="tab" onclick="showTab(this,'gcp-liability')">Liability</button>
-      <button class="tab" onclick="showTab(this,'gcp-data')">Data &amp; Privacy</button>
-      <button class="tab" onclick="showTab(this,'gcp-security')">Security</button>
-      <button class="tab" onclick="showTab(this,'gcp-breach')">Breach Notification</button>
-      <button class="tab" onclick="showTab(this,'gcp-ip')">IP &amp; Indemnification</button>
-      <button class="tab" onclick="showTab(this,'gcp-termination')">Termination &amp; Portability</button>
-      <button class="tab" onclick="showTab(this,'gcp-sla')">SLA / Uptime</button>
-      <button class="tab" onclick="showTab(this,'gcp-tiers')">Enterprise vs. Standard</button>
-      <button class="tab" onclick="showTab(this,'gcp-gotchas')">⚠️ Key Gotchas</button>
-    </div>
-
-    <div class="tab-content active" id="gcp-structure">
-      <table>
-        <thead><tr><th>Layer</th><th>Document</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td>Master</td><td><strong>Google Cloud Terms of Service</strong></td><td>cloud.google.com/terms; click-to-accept</td></tr>
-          <tr><td>Data</td><td>Cloud Data Processing Addendum (CDPA)</td><td>Auto-incorporated; governs all personal data processing</td></tr>
-          <tr><td>Service</td><td>Service Specific Terms (SST)</td><td>Per-product variations; SST prevails over ToS in conflicts</td></tr>
-          <tr><td>Use</td><td>Acceptable Use Policy (AUP)</td><td>24-hr cure trigger</td></tr>
-          <tr><td>Compliance</td><td>HIPAA BAA</td><td>Separately executed</td></tr>
-          <tr><td>Security</td><td>CDPA Appendix 2 (Security Measures)</td><td>Contractually referenced but not public-facing</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>Self-amending:</strong> Google can change the ToS unilaterally with 30 days' notice; continued use = consent. <strong>90 days' notice required for adverse SLA changes</strong> — a meaningful (and unusual) customer protection.</p>
-      </div>
-      <div class="highlight-box warn">
-        <p><strong>Pre-GA gap:</strong> Any service labeled Preview/Alpha/Beta has no SLA, no indemnification, no DPA, a $25K liability cap, and may be discontinued at any time. Google has a history of keeping products in Preview for 1–2 years.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="gcp-liability">
-      <table>
-        <thead><tr><th>Scenario</th><th>Cap</th></tr></thead>
-        <tbody>
-          <tr><td>Standard services</td><td>12-month trailing fees (no floor)</td></tr>
-          <tr><td>Free services</td><td>$5,000</td></tr>
-          <tr><td>Pre-GA services</td><td>Lesser of 12-month fees or $25,000</td></tr>
-          <tr><td>Google-Managed Multi-Cloud</td><td>Greater of 12-month fees or $25,000</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>⚠️ Critical gap:</strong> No carve-out for gross negligence or willful misconduct. The unlimited liability section carves out fraud, IP infringement, and death/personal injury — but NOT gross negligence. If Google's systems fail due to gross negligence, the damage cap still applies.</p>
-      </div>
-      <p style="margin-top:12px"><strong>Consequential damages:</strong> No indirect, consequential, special, incidental, or punitive damages; no lost revenues, profits, savings, or goodwill.</p>
-      <p style="margin-top:8px"><strong>Non-cancellable fees:</strong> "Customer's obligation to pay all Fees is non-cancellable." Credits only (not cash) for billing errors.</p>
-    </div>
-
-    <div class="tab-content" id="gcp-data">
-      <h3>Data Ownership</h3>
-      <p>"Customer retains all Intellectual Property Rights in Customer Data and Customer Applications." Google retains all IP in the Services and Software.</p>
-      <h3 style="margin-top:16px">Use Restriction</h3>
-      <p>"Google will only access or use Customer Data to provide the Services…and will not use it for any other Google products, services, or advertising."</p>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ AI/ML training ambiguity:</strong> The Cloud ToS and CDPA do NOT explicitly prohibit Google from using Customer Data to train AI/ML models. The Privacy Notice notes Google may use "algorithms to recognize patterns in Service Data" for service improvement. Explicit prohibition requires separate negotiation.</p>
-      </div>
-      <div class="highlight-box warn">
-        <p><strong>Prompt logging exception:</strong> Section 4.3 — Google may log customer prompts when automated safety tools detect potential AUP violations, overriding normal prompt handling protections. No opt-out available.</p>
-      </div>
-      <div class="highlight-box warn">
-        <p><strong>Reseller gap:</strong> If accessing services through a Google Cloud reseller, Section 5.2 data protection obligations may not apply directly. Google processes data per its separate agreement with the reseller, not the customer.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="gcp-security">
-      <h3>Contractually Committed (CDPA Section 7.4 — Binding Obligation)</h3>
-      <div class="highlight-box info">
-        <p>CDPA requires Google to maintain ISO 27001 and produce annual SOC 2/SOC 3 reports. <strong>If Google loses ISO 27001 or fails to produce annual SOC reports, it is in breach of the CDPA.</strong> This is a binding obligation, not a marketing claim.</p>
-      </div>
-      <table>
-        <thead><tr><th>Certification</th><th>Contractual Status</th></tr></thead>
-        <tbody>
-          <tr><td>ISO 27001 + additional (per Appendix 4)</td><td>✅ Contractually required (CDPA 7.4)</td></tr>
-          <tr><td>SOC 2 and SOC 3 (annual)</td><td>✅ Contractually required (CDPA 7.4)</td></tr>
-          <tr><td>SOC 1 Type II, ISO 27017/27018</td><td>Maintained but not contractually required in ToS</td></tr>
-          <tr><td>PCI DSS Level 1, FedRAMP, HIPAA, HITRUST</td><td>Marketing/compliance; not contractually guaranteed</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ Customer pre-accepts Google's security as "appropriate":</strong> CDPA Section 7.3.2 requires customers to agree that Google's security provides "a level of security appropriate to the risk to Customer Data." This could limit a customer's ability to argue Google was negligent in a future incident.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="gcp-breach">
-      <div class="highlight-box warn">
-        <p><strong>No specific notification timeline.</strong> "Promptly and without undue delay" — deliberately vague. GDPR's 72-hour clock to supervisory authorities runs independently; Google's delay notifying the customer could cause the customer to breach GDPR requirements.</p>
-      </div>
-      <h3 style="margin-top:16px">Notification Content Required</h3>
-      <ul style="padding-left:20px; color:#334155">
-        <li>Nature of the incident and Customer resources impacted</li>
-        <li>Measures Google has taken or plans to take</li>
-        <li>Recommended customer mitigation steps</li>
-        <li>Contact point for more information</li>
-      </ul>
-      <h3 style="margin-top:16px">Remediation Coverage</h3>
-      <p>None contractually specified beyond "reasonable steps to minimize harm." No forensic investigation obligation, no defined remediation timeline, no obligation to assist with regulatory filings, no credit monitoring commitment.</p>
-    </div>
-
-    <div class="tab-content" id="gcp-ip">
-      <h3>Google Indemnifies Customer For:</h3>
-      <ul style="padding-left:20px; color:#334155; margin-bottom:12px">
-        <li>Use of Google's technology used to provide the Services infringes third-party IP Rights</li>
-        <li>Use of Google Brand Features infringes third-party IP Rights</li>
-      </ul>
-      <h3>Generative AI Indemnification (2023 — Market Differentiating)</h3>
-      <div class="highlight-box info">
-        <p><strong>1. Generated output indemnity:</strong> Covers third-party IP claims (including copyright) for content generated using Google's AI products, provided Customer did not intentionally create infringing output and used responsible AI tools.</p>
-      </div>
-      <div class="highlight-box info">
-        <p><strong>2. Training data indemnity:</strong> Covers allegations that Google's use of training data to build its generative models infringes third-party IP Rights. Automatic — no amendment required.</p>
-      </div>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ IP remedy risk:</strong> If Google believes Services may infringe, Google may at its sole discretion <strong>terminate the service and refund only prepaid fees</strong>. IP risk can result in service loss with no damages beyond a refund — a meaningful risk for mission-critical services.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="gcp-termination">
-      <table>
-        <thead><tr><th>Party</th><th>Trigger</th><th>Notice</th></tr></thead>
-        <tbody>
-          <tr><td>Customer</td><td>Convenience</td><td>Any time (no minimum)</td></tr>
-          <tr><td>Google</td><td>Convenience</td><td>30 days' prior written notice</td></tr>
-          <tr><td>Either party</td><td>Material breach</td><td>30-day cure period</td></tr>
-          <tr><td>Google</td><td>Inactivity (60 days no activity/fees)</td><td>30 days' notice</td></tr>
-        </tbody>
-      </table>
-      <h3 style="margin-top:16px">Data After Termination</h3>
-      <p><strong>30-day recovery window</strong> from Term end. Google deletes all Customer Data within a maximum of <strong>180 days</strong> after the recovery window.</p>
-      <div class="highlight-box info" style="margin-top:12px">
-        <p><strong>✅ Free Cloud Exit program:</strong> Customers migrating all workloads off GCP get free data transfer for 30+ supported services (BigQuery, Cloud Storage, Cloud SQL, Spanner, etc.). Requires Exit Notice form submission and 30-day initiation window.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="gcp-sla">
-      <table>
-        <thead><tr><th>Service</th><th>Monthly Uptime SLA</th><th>Max Credit</th></tr></thead>
-        <tbody>
-          <tr><td>Compute Engine (single zone)</td><td>99.95%</td><td>100%</td></tr>
-          <tr><td>Compute Engine (multi-zone + LB Premium)</td><td>99.99%</td><td>100%</td></tr>
-          <tr><td>BigQuery</td><td>99.99%</td><td>50%</td></tr>
-          <tr><td>Cloud Storage (Standard)</td><td>99.9%</td><td>50%</td></tr>
-          <tr><td>Cloud Spanner (multi-region)</td><td>99.999%</td><td>50%</td></tr>
-          <tr><td>Cloud Run</td><td>99.95%</td><td>Varies</td></tr>
-          <tr><td>Pre-GA services</td><td>❌ No SLA</td><td>None</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ Claim window:</strong> Customer must file within <strong>60 days</strong> with supporting log files. Credits are the sole remedy and are capped at the monthly charge for the affected service in the affected region — not total spend.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="gcp-tiers">
-      <table>
-        <thead><tr><th>Dimension</th><th>Standard</th><th>Enterprise (Negotiated)</th></tr></thead>
-        <tbody>
-          <tr><td>Pricing</td><td>List price</td><td>20–40% discounts; spend commitments</td></tr>
-          <tr><td>Liability cap</td><td>12 months fees</td><td>Negotiable fixed dollar amount</td></tr>
-          <tr><td>Data residency</td><td>Standard region controls</td><td>Assured Workloads + VPC Service Controls</td></tr>
-          <tr><td>Termination assistance</td><td>Not included</td><td>Negotiable</td></tr>
-          <tr><td>Price at renewal</td><td>Reverts to list price immediately</td><td>Negotiate cap or transition period</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ Post-discount cliff:</strong> When committed term expires, all enterprise discounts revert to list prices immediately — potential 25–35% cost increase overnight at renewal. This should be negotiated out.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="gcp-gotchas">
+    <div class="gotcha-card">
+      <div class="vendor-name" style="color:#1a73e8">GCP</div>
       <ul class="gotcha-list">
-        <li><strong>No liability floor for standard services</strong> — catastrophic breach in month one = near-zero cap</li>
-        <li><strong>No carve-out for gross negligence or willful misconduct</strong> — damage cap applies even to catastrophic Google-caused failures</li>
-        <li><strong>Data breach remediation entirely uncovered</strong> — no forensic obligation, no notification cost coverage, no regulatory penalty coverage</li>
-        <li><strong>"Promptly and without undue delay" breach notification</strong> — no hours standard; GDPR 72-hour clock runs independently from customer</li>
-        <li><strong>Pre-GA services have zero contractual protections</strong> — no SLA, no indemnification, no DPA, $25K liability cap; Google routinely keeps products in Preview for 1–2 years</li>
-        <li><strong>Unilateral service modification with 30 days' notice</strong></li>
-        <li><strong>Post-discount cliff at contract expiration</strong> — no grace period; discounts revert to list price overnight</li>
-        <li><strong>Credits-only SLA remedy with 60-day claim window</strong> — credits capped at affected service charges in affected region, not total spend</li>
-        <li><strong>Reseller customers lose direct data protection rights</strong> — buried in SST Section 14</li>
-        <li><strong>Customer pre-accepts Google's security as "appropriate"</strong> — CDPA 7.3.2 could limit negligence claims</li>
-        <li><strong>AI/ML training prohibition not explicit</strong> — must be separately negotiated</li>
-        <li><strong>IP termination remedy</strong> — Google can terminate the service and refund only prepaid fees; no damages</li>
+        <li>AI/ML data use protections not explicit in base terms — require service-specific terms</li>
+        <li>Breach notification: "without undue delay" — no fixed clock</li>
+        <li>12-month liability cap with no breach-specific enhancement in base contract</li>
+        <li>Multiple URL-incorporated documents add complexity for legal review</li>
       </ul>
     </div>
-  </div>
-</section>
-
-<!-- ============================================================ OPENAI -->
-<section class="vendor-section" id="openai">
-  <div class="vendor-header" style="background: linear-gradient(135deg, #065f46, #10a37f)">
-    <div>
-      <h2>OpenAI</h2>
-      <div class="vendor-desc">Services Agreement (effective Jan. 1, 2026) · ChatGPT Enterprise · API Platform</div>
-    </div>
-  </div>
-  <div class="vendor-body">
-    <div class="tabs">
-      <button class="tab active" onclick="showTab(this,'oai-structure')">Agreement Structure</button>
-      <button class="tab" onclick="showTab(this,'oai-liability')">Liability</button>
-      <button class="tab" onclick="showTab(this,'oai-data')">Data &amp; Privacy</button>
-      <button class="tab" onclick="showTab(this,'oai-security')">Security</button>
-      <button class="tab" onclick="showTab(this,'oai-breach')">Breach Notification</button>
-      <button class="tab" onclick="showTab(this,'oai-ip')">IP &amp; Indemnification</button>
-      <button class="tab" onclick="showTab(this,'oai-termination')">Termination &amp; Portability</button>
-      <button class="tab" onclick="showTab(this,'oai-sla')">SLA / Uptime</button>
-      <button class="tab" onclick="showTab(this,'oai-tiers')">Enterprise vs. API vs. Team</button>
-      <button class="tab" onclick="showTab(this,'oai-gotchas')">⚠️ Key Gotchas</button>
-    </div>
-
-    <div class="tab-content active" id="oai-structure">
-      <p style="margin-bottom:12px"><strong>Precedence (highest to lowest):</strong></p>
-      <table>
-        <thead><tr><th>#</th><th>Document</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td><strong>Order Form</strong></td><td>Customer-negotiated commercial terms</td></tr>
-          <tr><td>2</td><td>Service-Specific Terms</td><td>Product-level (ChatGPT Enterprise, API, Team)</td></tr>
-          <tr><td>3</td><td>Services Agreement</td><td>Master commercial framework; does not apply to consumer use</td></tr>
-          <tr><td>4</td><td>OpenAI Policies</td><td>AUP, Usage Policies; contractual terms by reference</td></tr>
-          <tr><td>5</td><td>Data Processing Addendum (DPA)</td><td>Auto-activated when processing personal data</td></tr>
-          <tr><td>6</td><td>BAA</td><td>Optional; HIPAA use cases only</td></tr>
-        </tbody>
-      </table>
-      <h3 style="margin-top:20px">Key Changes in May 2025 Services Agreement</h3>
-      <ul style="padding-left:20px; color:#334155">
-        <li>Training restriction moved from policy language to <strong>contractual default</strong></li>
-        <li>Security Measures now defined as contractual exhibit</li>
-        <li>Suspension grounds codified (including "Security Emergencies")</li>
-        <li>Geographic restriction clause added</li>
-        <li>Price-change notice reduced to <strong>14 days</strong></li>
-      </ul>
-    </div>
-
-    <div class="tab-content" id="oai-liability">
-      <table>
-        <thead><tr><th>Scenario</th><th>Cap</th></tr></thead>
-        <tbody>
-          <tr><td>General liability</td><td>Mutual 12-month trailing fee cap</td></tr>
-          <tr><td>IP/Copyright Shield indemnity</td><td><strong>Explicitly uncapped</strong>; cannot be reduced without customer's written agreement</td></tr>
-          <tr><td>Gross negligence / willful misconduct</td><td>Uncapped carveout</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>AI-specific disclaimer:</strong> "Customer must not rely on output as a sole source of truth or factual information, or as a substitute for professional advice." Customer bears full evaluation burden for output quality. No accuracy warranty.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="oai-data">
-      <h3>Data Ownership</h3>
-      <p>Customer retains all ownership rights in Input and owns all Output. OpenAI assigns to Customer all right, title, and interest in Output — but outputs "may not be unique, and other users may receive similar content."</p>
-      <h3 style="margin-top:16px">Training Default (Contractual since May 2025)</h3>
-      <div class="highlight-box info">
-        <p>For ChatGPT Enterprise, Business/Team, Edu, Healthcare, and API Platform: <strong>No training by default</strong> — now a contractual commitment, not just policy. Customers can opt in voluntarily.</p>
-      </div>
-      <h3 style="margin-top:16px">Data Residency Options</h3>
-      <table>
-        <thead><tr><th>Region</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td>US, EU, UK, Canada, Japan, South Korea, Singapore, India, Australia, UAE</td><td>Available for new Projects only; existing projects cannot be migrated</td></tr>
-          <tr><td>EU residency</td><td>Data at rest in Europe; inference still runs on US infrastructure by default (in-region GPU available to select Enterprise customers only)</td></tr>
-        </tbody>
-      </table>
-      <p style="margin-top:12px"><strong>EKM/BYOK:</strong> Available for Enterprise/Edu with named account rep. Supports AWS KMS, GCP KMS, Azure Key Vault. OpenAI never sees customer KEKs.</p>
-    </div>
-
-    <div class="tab-content" id="oai-security">
-      <table>
-        <thead><tr><th>Certification</th><th>Coverage</th></tr></thead>
-        <tbody>
-          <tr><td>SOC 2 Type II</td><td>API, ChatGPT Enterprise, Edu, Team (Jan–Jun 2025 period)</td></tr>
-          <tr><td>ISO/IEC 27001:2022</td><td>API, ChatGPT Enterprise, Edu</td></tr>
-          <tr><td>ISO/IEC 27701:2019</td><td>Privacy Information Management</td></tr>
-          <tr><td>ISO/IEC 27017:2015</td><td>Cloud security controls</td></tr>
-          <tr><td>ISO/IEC 27018:2019</td><td>PII in public clouds</td></tr>
-        </tbody>
-      </table>
-      <p style="margin-top:12px"><strong>Audit rights:</strong> DPA permits customer audits no more than once per year; minimally disruptive to OpenAI. In practice, OpenAI satisfies via SOC 2/ISO reports rather than direct audits.</p>
-    </div>
-
-    <div class="tab-content" id="oai-breach">
-      <div class="highlight-box warn">
-        <p><strong>No specific hours standard.</strong> DPA: "Without undue delay after becoming aware of any Personal Data Breach." No timeline specified.</p>
-      </div>
-      <h3 style="margin-top:16px">Real-World Performance (Mixpanel Incident, Nov. 2025)</h3>
-      <table>
-        <thead><tr><th>Event</th><th>Timeline</th></tr></thead>
-        <tbody>
-          <tr><td>Unauthorized access identified by Mixpanel</td><td>November 9, 2025</td></tr>
-          <tr><td>Affected dataset shared with OpenAI</td><td>November 25, 2025</td></tr>
-          <tr><td>OpenAI public disclosure</td><td>November 26, 2025</td></tr>
-          <tr><td>Lag from incident to notification</td><td><strong>~16 days</strong></td></tr>
-        </tbody>
-      </table>
-      <p style="margin-top:12px"><strong>Remediation coverage:</strong> No contractual commitment to cover remediation costs, credit monitoring, or breach-related customer expenses.</p>
-    </div>
-
-    <div class="tab-content" id="oai-ip">
-      <h3>Copyright Shield — Key Features</h3>
-      <div class="highlight-box info">
-        <p><strong>✅ Uncapped IP indemnity:</strong> "The Service-Specific Terms Indemnity is not subject to any liability cap, and OpenAI may not materially reduce Customer's protections under the Service-Specific Terms Indemnity without Customer's written agreement."</p>
-      </div>
-      <p style="margin-top:12px">Covers: claims that the Services OR customer's use/distribution of Output infringes third-party IP rights.</p>
-      <h3 style="margin-top:16px">Copyright Shield Carve-outs</h3>
-      <ul style="padding-left:20px; color:#334155">
-        <li>Combination with third-party products not provided by OpenAI</li>
-        <li>Modification of Services by others</li>
-        <li><strong>Customer Content</strong> (customer-provided inputs)</li>
-        <li><strong>Customer Applications</strong> (apps built on top)</li>
-      </ul>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ The carve-outs are narrow but critical:</strong> If the customer's prompt was the proximate cause of infringing output, the carve-out under Customer Content/Customer Applications may apply — leaving the customer exposed in the most common AI copyright risk scenario.</p>
-      </div>
-      <p style="margin-top:12px"><strong>Competitive use restriction:</strong> Customers cannot use outputs to train AI models that compete with OpenAI's services — an AI-specific restriction with no traditional SaaS analog.</p>
-    </div>
-
-    <div class="tab-content" id="oai-termination">
-      <h3>Termination Rights</h3>
-      <p>Either party: material breach (30-day cure); insolvency (immediate). OpenAI may suspend (without termination) for Security Emergencies, Policy violations, or geographic/trade control violations — no minimum notice period.</p>
-      <h3 style="margin-top:16px">Data After Termination</h3>
-      <p>All Customer Content deleted within <strong>30 days</strong>. Subprocessors directed to delete within 30 days.</p>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ No structured export mechanism</strong> in standard terms. Enterprise customers should negotiate export rights (format, timeframe) in the Order Form.</p>
-      </div>
-      <p><strong>Dispute resolution:</strong> 60-day informal negotiation → binding arbitration (NAM, San Francisco). Governing law: California.</p>
-    </div>
-
-    <div class="tab-content" id="oai-sla">
-      <table>
-        <thead><tr><th>Tier</th><th>SLA</th><th>Credits</th></tr></thead>
-        <tbody>
-          <tr><td>Standard API</td><td>❌ None — zero uptime guarantee</td><td>❌ None</td></tr>
-          <tr><td>Priority Processing (Enterprise API add-on)</td><td>99.9% monthly</td><td>Paid add-on</td></tr>
-          <tr><td>Scale Tier (API)</td><td>99.9% monthly</td><td>Reserved capacity</td></tr>
-          <tr><td>ChatGPT Enterprise (standard)</td><td>❌ None publicly documented</td><td>Negotiable</td></tr>
-          <tr><td>ChatGPT Enterprise (negotiated)</td><td>✅ Negotiable (typically 10–50% fee credits)</td><td>Negotiable</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>Model changes not covered by any SLA.</strong> No advance notice obligation for model version updates, capability changes, or deprecation. Token prices can change with only <strong>14 days' notice</strong> on the Pricing Page — no rate lock by default.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="oai-tiers">
-      <table>
-        <thead><tr><th>Dimension</th><th>ChatGPT Enterprise</th><th>API Platform</th><th>ChatGPT Team</th></tr></thead>
-        <tbody>
-          <tr><td>Min. seats</td><td>~150</td><td>N/A</td><td>2</td></tr>
-          <tr><td>Training default</td><td>No (contractual)</td><td>No (contractual)</td><td>No (contractual)</td></tr>
-          <tr><td>BAA availability</td><td>Yes (sales only)</td><td>Yes (email; ZDR endpoints)</td><td>❌ No</td></tr>
-          <tr><td>ZDR</td><td>Configurable</td><td>Yes (eligible endpoints)</td><td>❌ No</td></tr>
-          <tr><td>Data residency</td><td>EU/US/others (new workspaces)</td><td>EU/US/others (new projects)</td><td>US only</td></tr>
-          <tr><td>EKM/BYOK</td><td>Yes (named account rep)</td><td>❌ No</td><td>❌ No</td></tr>
-          <tr><td>SLA</td><td>Negotiable</td><td>99.9% (Priority/Scale only)</td><td>❌ None</td></tr>
-          <tr><td>Copyright Shield</td><td>Yes (uncapped)</td><td>Yes (uncapped)</td><td>Not clearly documented</td></tr>
-          <tr><td>Pricing</td><td>~$60–100/user/mo</td><td>Usage-based</td><td>$25–30/user/mo</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="oai-gotchas">
+    <div class="gotcha-card">
+      <div class="vendor-name" style="color:#10a37f">OpenAI</div>
       <ul class="gotcha-list">
-        <li><strong>"As Is" AI output disclaimer</strong> — no warranty that outputs are accurate, complete, or fit for purpose</li>
-        <li><strong>No default SLA</strong> — zero uptime guarantee; SLA only on paid add-on tiers</li>
-        <li><strong>Training prohibition is contractual as of May 2025</strong> — was previously policy-only; verify Order Form reflects this</li>
-        <li><strong>Liability cap tied to trailing fees with no floor</strong> — very low for early/low-spend deployments</li>
-        <li><strong>14-day pricing change notice</strong> — no rate lock by default</li>
-        <li><strong>Model changes without notice</strong> — no advance notice obligation; no version pinning by default</li>
-        <li><strong>Competitive use restriction on outputs</strong> — cannot use to train competing AI models</li>
-        <li><strong>Copyright Shield carve-outs are narrow but critical</strong> — customer content/applications exclusions leave significant gaps</li>
-        <li><strong>Breach notification: "without undue delay" — no hours standard</strong>; Mixpanel incident showed 16-day lag</li>
-        <li><strong>End-user privity gap</strong> — end-customers have zero enforceable rights against OpenAI; enterprises absorb all downstream liability for model failures</li>
-        <li><strong>California mandatory arbitration</strong> — no jurisdiction flexibility for non-US or regulated entities</li>
+        <li>No default SLA — enterprise terms require sales negotiation</li>
+        <li>Breach notification: "without undue delay" — no contractual clock</li>
+        <li>14-day pricing change notice only — other material changes can happen faster</li>
+        <li>No structured data export on termination</li>
+        <li>Copyright Shield (uncapped IP indemnity) applies to ChatGPT Enterprise only</li>
       </ul>
     </div>
-  </div>
-</section>
-
-<!-- ============================================================ SNOWFLAKE -->
-<section class="vendor-section" id="snowflake">
-  <div class="vendor-header" style="background: linear-gradient(135deg, #0369a1, #29b5e8)">
-    <div>
-      <h2>Snowflake</h2>
-      <div class="vendor-desc">Terms of Service · Data Platform · Standard / Enterprise / Business Critical / VPS</div>
-    </div>
-  </div>
-  <div class="vendor-body">
-    <div class="tabs">
-      <button class="tab active" onclick="showTab(this,'sf-structure')">Agreement Structure</button>
-      <button class="tab" onclick="showTab(this,'sf-liability')">Liability</button>
-      <button class="tab" onclick="showTab(this,'sf-data')">Data &amp; Privacy</button>
-      <button class="tab" onclick="showTab(this,'sf-security')">Security</button>
-      <button class="tab" onclick="showTab(this,'sf-breach')">Breach Notification</button>
-      <button class="tab" onclick="showTab(this,'sf-ip')">IP &amp; Indemnification</button>
-      <button class="tab" onclick="showTab(this,'sf-termination')">Termination &amp; Portability</button>
-      <button class="tab" onclick="showTab(this,'sf-sla')">SLA / Uptime</button>
-      <button class="tab" onclick="showTab(this,'sf-tiers')">Edition Comparison</button>
-      <button class="tab" onclick="showTab(this,'sf-gotchas')">⚠️ Key Gotchas</button>
-    </div>
-
-    <div class="tab-content active" id="sf-structure">
-      <table>
-        <thead><tr><th>Document</th><th>Governs</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Terms of Service (ToS)</strong></td><td>Master agreement</td></tr>
-          <tr><td>Data Processing Addendum (DPA)</td><td>GDPR/CCPA obligations</td></tr>
-          <tr><td>Security Addendum</td><td>Security controls, audit rights, certifications</td></tr>
-          <tr><td>Acceptable Use Policy (AUP)</td><td>Prohibited uses, suspension triggers</td></tr>
-          <tr><td>Support Policy &amp; SLA</td><td>Uptime targets, support tiers, credits</td></tr>
-          <tr><td>Offering-Specific Terms</td><td>Supplemental terms for specific products/features</td></tr>
-          <tr><td>Order Form</td><td>Commercial terms, subscription period, edition</td></tr>
-          <tr><td>BAA</td><td>HIPAA (Business Critical+ only)</td></tr>
-          <tr><td>Vendor Data Protection Addendum</td><td>Governs Snowflake's subprocessors (last updated Mar. 10, 2025)</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:16px">
-        <p><strong>⚠️ Critical — Unilateral mid-contract URL updates:</strong> The DPA, Security Addendum, Support Policy, AUP, and Offering-Specific Terms are incorporated by URL reference. Snowflake can change security standards, data processing obligations, and SLA structure during the term <strong>without customer consent</strong> by updating the URL target.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="sf-liability">
-      <table>
-        <thead><tr><th>Claim Type</th><th>Cap</th></tr></thead>
-        <tbody>
-          <tr><td>General liability</td><td>1x fees paid/payable in prior 12 months (per Order Form)</td></tr>
-          <tr><td>Data protection violations / unauthorized disclosure</td><td><strong>2x fees paid in prior 12 months</strong></td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>Cross-affiliate aggregation:</strong> Caps aggregated across the base agreement AND separate agreements for Customer Affiliates. A parent company with multiple Snowflake agreements across subsidiaries cannot benefit from per-entity caps.</p>
-      </div>
-      <p style="margin-top:12px"><strong>Consequential damages exclusion:</strong> No loss of use, lost/inaccurate data, interruption of business, costs of delay, lost profits, or indirect/special/incidental/punitive/exemplary/consequential damages.</p>
-      <div class="highlight-box warn">
-        <p><strong>HIPAA carve-out:</strong> Without a BAA, Snowflake disclaims all liability for HIPAA Data regardless of any other agreement provision.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="sf-data">
-      <h3>Data Ownership</h3>
-      <p>"Customer or its licensors retain all right, title and interest in and to the Customer Data." Snowflake receives only a limited license to process solely to provide the Offerings.</p>
-      <h3 style="margin-top:16px">Usage Data Carve-out</h3>
-      <div class="highlight-box warn">
-        <p><strong>⚠️ Snowflake collects and uses Usage Data</strong> (operations data, query logs, metadata) for product development and improvement. Customers receive no compensation and there is no opt-out in standard terms. Snowflake derives commercial value from aggregate patterns of customer workloads.</p>
-      </div>
-      <h3 style="margin-top:16px">Data Residency</h3>
-      <p>Customers choose region at account creation. Data remains in selected region unless customer configures cross-region replication. DPA incorporates 2021 EU SCCs for cross-border transfers.</p>
-    </div>
-
-    <div class="tab-content" id="sf-security">
-      <table>
-        <thead><tr><th>Certification</th><th>Available In</th></tr></thead>
-        <tbody>
-          <tr><td>SOC 1 &amp; SOC 2 Type II</td><td>All commercial editions</td></tr>
-          <tr><td>ISO 27001:2022 / 27017 / 27018</td><td>All commercial editions</td></tr>
-          <tr><td>HIPAA / HITRUST CSF</td><td>Business Critical and VPS only</td></tr>
-          <tr><td>PCI DSS / FedRAMP / ITAR / IRAP</td><td>Business Critical and VPS only (specific regions)</td></tr>
-        </tbody>
-      </table>
-      <h3 style="margin-top:16px">Edition Security Controls</h3>
-      <table>
-        <thead><tr><th>Edition</th><th>Key Security Additions</th></tr></thead>
-        <tbody>
-          <tr><td>Standard</td><td>AES-256 at rest, TLS in transit, MFA, RBAC, OAuth, network policies</td></tr>
-          <tr><td>Enterprise</td><td>+ Periodic encryption rekeying, column/row-level security, 90-day Time Travel</td></tr>
-          <tr><td>Business Critical</td><td>+ Tri-Secret Secure (customer-managed keys), PrivateLink, PHI/HIPAA, enhanced monitoring</td></tr>
-          <tr><td>VPS</td><td>+ Fully dedicated hardware (no shared compute or metadata store)</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="sf-breach">
-      <div class="highlight-box info">
-        <p><strong>DPA commitment:</strong> "Without undue delay, and in any case, where feasible, within 72 hours after becoming aware." Subprocessors must notify Snowflake within 48 hours (Vendor DPA, Mar. 10, 2025).</p>
-      </div>
-      <h3 style="margin-top:16px">Real-World Failure — May–June 2024 Breach</h3>
-      <table>
-        <thead><tr><th>Event</th><th>Timeline</th></tr></thead>
-        <tbody>
-          <tr><td>Unusual activity identified (UNC5537/ShinyHunters)</td><td>Mid-April 2024</td></tr>
-          <tr><td>Customer notification/public disclosure</td><td>~May 30, 2024</td></tr>
-          <tr><td>Lag from detection to notification</td><td><strong>~45 days</strong> — grossly exceeded 72-hour DPA target</td></tr>
-          <tr><td>Mandatory MFA announced</td><td>June 10, 2024 (post-breach)</td></tr>
-          <tr><td>Legal consequence</td><td>Class-action lawsuit filed (District of Montana)</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ No contractual penalties for missing the notification timeline.</strong> Remediation: 2x Data Protection Cap is the financial ceiling; all indirect/consequential damages (regulatory fines, third-party notification costs, business interruption) are excluded.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="sf-ip">
-      <h3>Snowflake Indemnifies</h3>
-      <p>Against third-party claims that the Service (when used as authorized) infringes a <strong>U.S. patent, copyright, or trademark.</strong></p>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ U.S.-only scope:</strong> Non-U.S. IP claims are not covered. Customers with significant EU or APAC IP exposure have no contractual backstop.</p>
-      </div>
-      <p><strong>Sole remedy clause:</strong> This is "Customer's sole remedy with respect to any claim of intellectual property infringement." No additional damages available beyond the indemnification framework.</p>
-      <h3 style="margin-top:16px">Snowflake's Remedy Options</h3>
-      <ul style="padding-left:20px; color:#334155">
-        <li>Replace/modify the infringing service with a non-infringing equivalent</li>
-        <li>Procure customer's right to continue using the Service</li>
-        <li>If neither is commercially reasonable, terminate and refund unused fees</li>
-      </ul>
-      <h3 style="margin-top:16px">Feedback → Snowflake IP</h3>
-      <p>Snowflake may "freely use and incorporate any suggestions, comments or other feedback voluntarily provided by Customer or Users." No compensation or attribution required.</p>
-    </div>
-
-    <div class="tab-content" id="sf-termination">
-      <h3>Data Retrieval After Termination</h3>
-      <div class="highlight-box warn">
-        <p><strong>Up to 30 calendar days</strong> from termination/expiration to access the Service solely to retrieve Customer Data. After that window, Snowflake "shall promptly delete the Customer Data." <strong>No guaranteed post-termination read-only access, no migration assistance.</strong></p>
-      </div>
-      <h3 style="margin-top:16px">Export Format</h3>
-      <p>COPY INTO and GET commands export data to flat/delimited text or external cloud storage (S3, Azure Blob, GCP Storage). No contractual obligation for migration assistance beyond the 30-day window.</p>
-      <h3 style="margin-top:16px">Termination for Cause</h3>
-      <p>Either party: material breach not cured within <strong>30 days</strong> of written notice.</p>
-      <p><strong>Customer refund:</strong> If customer terminates for Snowflake's breach → refund of prepaid unused fees. If Snowflake terminates for customer's breach → no refund.</p>
-      <h3 style="margin-top:16px">Suspension Rights (Broad)</h3>
-      <p>Snowflake may suspend for: fees 30+ days overdue; AUP breach; or to "avoid material harm to Snowflake or its other customers" — a vague, discretionary standard with no defined notice period.</p>
-    </div>
-
-    <div class="tab-content" id="sf-sla">
-      <table>
-        <thead><tr><th>Edition</th><th>Monthly Uptime SLA</th></tr></thead>
-        <tbody>
-          <tr><td>Enterprise</td><td><strong>99.9%</strong></td></tr>
-          <tr><td>Business Critical</td><td><strong>99.99%</strong> (added Sept. 2024)</td></tr>
-          <tr><td>VPS</td><td>Negotiated (typically 99.99%+)</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ SLA measurement limitation:</strong> "Unavailable" = Error Rate &gt; threshold over a 1-minute interval, measuring only backend query execution errors — not authentication failures, client library issues, or external connectivity. Snowflake itself acknowledges "industry-standard SLA thresholds are not particularly good measures of user experience."</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="sf-tiers">
-      <table>
-        <thead><tr><th>Dimension</th><th>Standard</th><th>Enterprise</th><th>Business Critical</th><th>VPS</th></tr></thead>
-        <tbody>
-          <tr><td>Pricing (list)</td><td>~$2/credit</td><td>~$3/credit</td><td>~$4/credit</td><td>Negotiated</td></tr>
-          <tr><td>SLA</td><td>—</td><td>99.9%</td><td>99.99%</td><td>99.99%+ (neg.)</td></tr>
-          <tr><td>Support</td><td>Standard</td><td>Standard</td><td>Premier (24/7, 1-hr Sev1)</td><td>Premier</td></tr>
-          <tr><td>HIPAA/PHI</td><td>❌</td><td>❌</td><td>✅ (BAA required)</td><td>✅ (BAA required)</td></tr>
-          <tr><td>Customer-managed keys</td><td>❌</td><td>❌</td><td>✅ Tri-Secret Secure</td><td>✅</td></tr>
-          <tr><td>Private network</td><td>❌</td><td>❌</td><td>✅ PrivateLink</td><td>✅</td></tr>
-          <tr><td>Hardware isolation</td><td>Shared</td><td>Shared</td><td>Shared (enhanced)</td><td>Fully dedicated</td></tr>
-          <tr><td>FedRAMP</td><td>❌</td><td>❌</td><td>✅ (specific regions)</td><td>✅</td></tr>
-          <tr><td>Time Travel</td><td>1 day</td><td>90 days</td><td>90 days</td><td>90 days</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="sf-gotchas">
+    <div class="gotcha-card">
+      <div class="vendor-name" style="color:#29b5e8">Snowflake</div>
       <ul class="gotcha-list">
-        <li><strong>Unilateral mid-contract updates via URL incorporation</strong> — security standards, DPA, and SLA can change without customer consent mid-contract</li>
-        <li><strong>Liability cap aggregated across affiliates</strong> — parent companies with multiple agreements can't benefit from per-entity caps</li>
-        <li><strong>No consequential damages — ever</strong> — even for Snowflake's gross negligence causing a major data breach; regulatory fines, notification costs, and business interruption are all excluded</li>
-        <li><strong>IP indemnity is U.S.-only and sole-remedy</strong> — non-U.S. enterprises have no contractual backstop for international IP claims</li>
-        <li><strong>30-day retrieval window with no transition assistance</strong> — petabyte-scale exports using self-service tools only</li>
-        <li><strong>Broad, vague suspension trigger</strong> — "material harm to Snowflake or its other customers" is undefined and discretionary</li>
-        <li><strong>Customer reference/marketing without guaranteed removal</strong> — removal is only "to the extent commercially feasible"</li>
-        <li><strong>Feedback becomes Snowflake IP</strong> — voluntary feedback is usable without compensation or attribution</li>
-        <li><strong>Taxes fully customer-borne with gross-up</strong> — above-standard in enterprise SaaS</li>
-        <li><strong>45-day breach notification failure in 2024</strong> — violated 72-hour DPA target; no contractual penalties for missing the timeline</li>
-        <li><strong>HIPAA complete liability exclusion without BAA</strong> — no exceptions</li>
-        <li><strong>Purchase orders explicitly nullified</strong> — PO-incorporated terms have zero contractual effect</li>
+        <li>Committed to 72-hour breach notification in DPA — took 45 days in the 2024 Neiman Marcus incident</li>
+        <li>URL-incorporated terms: changes can take effect with minimal notice</li>
+        <li>2x liability cap requires a specific data protection breach trigger to activate</li>
+        <li>Customer-managed keys (Tri-Secret Secure) requires Business Critical tier</li>
       </ul>
     </div>
-  </div>
-</section>
-
-<!-- ============================================================ AWS -->
-<section class="vendor-section" id="aws">
-  <div class="vendor-header" style="background: linear-gradient(135deg, #7c4a00, #ff9900)">
-    <div>
-      <h2>AWS</h2>
-      <div class="vendor-desc">AWS Customer Agreement (updated Feb. 16, 2026) · Service Terms · DPA · EDP/Private Pricing Agreement</div>
-    </div>
-  </div>
-  <div class="vendor-body">
-    <div class="tabs">
-      <button class="tab active" onclick="showTab(this,'aws-structure')">Agreement Structure</button>
-      <button class="tab" onclick="showTab(this,'aws-liability')">Liability</button>
-      <button class="tab" onclick="showTab(this,'aws-data')">Data &amp; Privacy</button>
-      <button class="tab" onclick="showTab(this,'aws-security')">Security</button>
-      <button class="tab" onclick="showTab(this,'aws-breach')">Breach Notification</button>
-      <button class="tab" onclick="showTab(this,'aws-ip')">IP &amp; Indemnification</button>
-      <button class="tab" onclick="showTab(this,'aws-termination')">Termination &amp; Portability</button>
-      <button class="tab" onclick="showTab(this,'aws-sla')">SLA / Uptime</button>
-      <button class="tab" onclick="showTab(this,'aws-tiers')">Enterprise vs. Standard</button>
-      <button class="tab" onclick="showTab(this,'aws-gotchas')">⚠️ Key Gotchas</button>
-    </div>
-
-    <div class="tab-content active" id="aws-structure">
-      <table>
-        <thead><tr><th>Document</th><th>Role</th></tr></thead>
-        <tbody>
-          <tr><td><strong>AWS Customer Agreement (ACA)</strong></td><td>Master agreement; governs payment, liability, indemnification, termination, IP</td></tr>
-          <tr><td>AWS Service Terms</td><td>Per-service terms incorporated by reference; govern individual services (EC2, S3, Bedrock, etc.); prevail over ACA for service-specific matters</td></tr>
-          <tr><td>Service Level Agreements (SLAs)</td><td>Per-service uptime commitments and credit schedules; separate documents per service</td></tr>
-          <tr><td>AWS Data Processing Addendum (DPA)</td><td>Governs personal data; auto-incorporated globally for any customer processing personal data — no opt-in required</td></tr>
-          <tr><td>Business Associate Addendum (BAA)</td><td>Governs PHI under HIPAA; self-service acceptance via AWS Artifact; applies only to designated "HIPAA Accounts"</td></tr>
-          <tr><td>Acceptable Use Policy (AUP)</td><td>Defines prohibited activities; incorporated by reference</td></tr>
-          <tr><td>Supplementary Addenda</td><td>UK GDPR, Swiss FDPA, CCPA Terms — auto-incorporated when applicable law triggers them</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box info" style="margin-top:16px">
-        <p><strong>Enterprise Discount Program (EDP) / Private Pricing Agreement (PPA):</strong> A negotiated <em>overlay</em> to the standard ACA — not a replacement. Primarily changes: committed spend discounts, payment terms, mandatory Enterprise Support enrollment, and service-specific pricing. The underlying ACA liability cap, indemnification structure, and suspension rights remain intact unless the customer is large enough to demand direct legal negotiation.</p>
-      </div>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>Self-amending:</strong> AWS posts revised terms at aws.amazon.com/agreement/recent-changes/. No minimum notice period for non-SLA changes. Continued use = acceptance. Adverse SLA changes get 90 days' notice.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="aws-liability">
-      <h3>Liability Cap (ACA Section 9.2)</h3>
-      <div class="highlight-box warn">
-        <p>"The aggregate liability…will not exceed the amounts paid by you to AWS under this agreement for the <strong>services that gave rise to the liability</strong> during the 12 months before the liability arose."</p>
-        <p style="margin-top:8px"><strong>⚠️ The cap is per-service, not total AWS spend.</strong> A $10M/year AWS customer suffering an S3-caused breach gets a cap based only on S3 fees — not the full $10M.</p>
-      </div>
-      <h3 style="margin-top:20px">Excluded Damages (Section 9.1)</h3>
-      <p>Neither party liable for: indirect, incidental, special, consequential, or exemplary damages; the value of customer content; loss of profits, revenues, customers, opportunities, or goodwill; or <strong>"unavailability of the services."</strong></p>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ "Unavailability" is explicitly excluded.</strong> Even a total service outage won't trigger meaningful liability. SLA credits (max 25–30% of monthly service fees) are the effective financial ceiling for most availability failures.</p>
-      </div>
-      <h3 style="margin-top:20px">Carve-outs (Cap Does NOT Apply)</h3>
-      <table>
-        <thead><tr><th>Carve-out</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td>IP indemnification obligations</td><td>AWS's defense/payment obligations under Section 7 excluded from cap</td></tr>
-          <tr><td>EU customers — gross negligence/willful misconduct (Sept. 2025 update)</td><td>For Amazon Web Services EMEA SARL + EU Account Country customers: Section 7.1 indemnification does not apply to the extent losses caused by AWS's gross negligence or willful misconduct</td></tr>
-          <tr><td>Applicable law limitations</td><td>Sept. 2025 update added: limitations apply "to the extent permitted by applicable law"</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tab-content" id="aws-data">
-      <h3>Data Ownership</h3>
-      <p>"You or your licensors own all right, title, and interest in and to Your Content." AWS makes no claim to customer content.</p>
-      <h3 style="margin-top:16px">Use Restrictions</h3>
-      <ul style="padding-left:20px; color:#334155; margin-bottom:12px">
-        <li>AWS will not access or use customer content except to maintain or provide services, or as required by law</li>
-        <li>Will not disclose to any government or third party without consent (with commitment to notify customer where legally permitted)</li>
-        <li>AWS FAQ: "We do not use your content or derive information from it for marketing or advertising purposes"</li>
-      </ul>
-      <div class="highlight-box warn">
-        <p><strong>AI/ML training:</strong> AWS does not use customer content to train AI/ML models for external use. This is a posted policy commitment backed by the ACA's access restriction language — <strong>not an explicit contractual clause with defined remedies</strong>.</p>
-      </div>
-      <h3 style="margin-top:16px">Data Residency</h3>
-      <p>Customer chooses AWS Region(s). AWS will not move customer content outside the selected region without customer instruction, except as required by law.</p>
-      <h3 style="margin-top:16px">GDPR / International Transfers</h3>
-      <p>DPA applies automatically globally — no separate opt-in. SCCs incorporated for EEA transfers. UK GDPR and Swiss FDPA addenda apply automatically when triggered. AWS has implemented the EU-US Data Privacy Framework adequacy decision (July 2023).</p>
-    </div>
-
-    <div class="tab-content" id="aws-security">
-      <h3>Shared Responsibility Model (Contractually Binding)</h3>
-      <table>
-        <thead><tr><th>AWS Responsible ("Security of the Cloud")</th><th>Customer Responsible ("Security in the Cloud")</th></tr></thead>
-        <tbody>
-          <tr><td>Physical data center security</td><td>Guest OS patching (IaaS/EC2)</td></tr>
-          <tr><td>Hardware and virtualization layer</td><td>Application security</td></tr>
-          <tr><td>Host OS and hypervisor</td><td>IAM configuration and access management</td></tr>
-          <tr><td>Network infrastructure</td><td>Data encryption selection and key management</td></tr>
-          <tr><td>AWS-managed service patching</td><td>Firewall/security group configuration</td></tr>
-        </tbody>
-      </table>
-      <p style="margin-top:12px">For managed services (S3, DynamoDB, Lambda), AWS takes on more responsibility — customers primarily manage data classification, access permissions, and encryption choices.</p>
-      <h3 style="margin-top:16px">Certifications</h3>
-      <p>SOC 1/2/3, ISO 27001/27017/27018, PCI DSS Level 1, FedRAMP Moderate/High, HIPAA (via BAA), HITRUST, and many others. Available via AWS Artifact as auditable compliance evidence.</p>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>What is NOT contractually committed:</strong> Specific penetration testing frequency; specific patch SLAs; mean time to detect/respond for security incidents; specific audit report delivery timelines. AWS commits to "appropriate technical and organizational security measures" — GDPR-standard language, not specific controls.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="aws-breach">
-      <div class="highlight-box warn">
-        <p><strong>No specific notification timeline.</strong> DPA: "Without undue delay" after becoming aware of a personal data breach. No hour or day commitment.</p>
-      </div>
-      <h3 style="margin-top:16px">Notification Channel</h3>
-      <p>Email to one or more administrator accounts. No commitment to phone notification, dedicated incident management, or named contact notification.</p>
-      <h3 style="margin-top:16px">Division of Responsibility</h3>
-      <p>AWS notifies the customer; the customer is then responsible for determining whether applicable law requires notification to regulators or data subjects and taking necessary action. <strong>AWS does not notify regulators on the customer's behalf.</strong></p>
-      <h3 style="margin-top:16px">What AWS Does NOT Commit To</h3>
-      <ul style="padding-left:20px; color:#334155">
-        <li>Root cause analysis delivery timeline</li>
-        <li>Remediation steps or timeline</li>
-        <li>Forensic evidence preservation</li>
-        <li>Specific containment measures</li>
-        <li>Covering customer-side notification costs</li>
-        <li>Dedicated escalation path or incident response contact</li>
-      </ul>
-    </div>
-
-    <div class="tab-content" id="aws-ip">
-      <h3>AWS Indemnifies Customers Against</h3>
-      <p>Third-party claims that any AWS service infringes a third party's intellectual property rights. AWS will defend and pay resulting damages and costs (including attorneys' fees). IP indemnification obligations are excluded from the liability cap.</p>
-      <h3 style="margin-top:16px">IP Indemnification Exclusions</h3>
-      <ul style="padding-left:20px; color:#334155; margin-bottom:12px">
-        <li>Claim arises from customer modifications to the service</li>
-        <li>Claim arises from combination of the service with non-AWS products</li>
-        <li>Customer continued using the service after AWS notified them to stop to avoid infringement</li>
-        <li>Claim arises from customer content</li>
-      </ul>
-      <h3>Customer Indemnifies AWS Against</h3>
-      <p>Third-party claims arising from customer content, customer use of services, or customer's breach of the agreement — a broad obligation covering privacy violations, IP infringement in customer content, and regulatory actions triggered by customer data.</p>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ No shared-responsibility carve-out:</strong> For incidents jointly caused by AWS misconfiguration and customer misconfiguration, both parties' indemnification obligations could apply — creating disputes about causation proportionality.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="aws-termination">
-      <table>
-        <thead><tr><th>Scenario</th><th>Notice</th></tr></thead>
-        <tbody>
-          <tr><td>Either party (convenience)</td><td>30 days</td></tr>
-          <tr><td>Either party (material breach)</td><td>30-day cure period</td></tr>
-          <tr><td>AWS (security risk, fraud, legal risk)</td><td>Immediately — no cure period</td></tr>
-          <tr><td>AWS (discontinues a service — material functionality)</td><td>12 months advance notice</td></tr>
-          <tr><td>AWS (emergency discontinuation)</td><td>Immediately</td></tr>
-        </tbody>
-      </table>
-      <h3 style="margin-top:16px">Post-Termination Data</h3>
-      <table>
-        <thead><tr><th>Period</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>During 30 days post-termination</td><td>Content not erased; customer may retrieve</td></tr>
-          <tr><td>Up to 90 days post-termination</td><td>AWS will return or delete Customer Data upon request via Service Controls</td></tr>
-          <tr><td>After 90 days</td><td>Permanently deleted (except backup/log retention per technical docs)</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box info" style="margin-top:16px">
-        <p><strong>Free egress on departure (March 2024):</strong> AWS waives data egress fees for customers migrating away. Transfers &gt;100 GB/month require contacting AWS Support for credits. Driven by the EU Data Act (effective Sept. 2025).</p>
-      </div>
-      <div class="highlight-box warn">
-        <p><strong>⚠️ Egress waiver is a pricing policy, not an ACA contractual term.</strong> It could theoretically be reversed without ACA amendment (though regulatory pressure makes this unlikely for EU customers).</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="aws-sla">
-      <table>
-        <thead><tr><th>Service</th><th>Deployment</th><th>Uptime SLA</th></tr></thead>
-        <tbody>
-          <tr><td>EC2 (Compute)</td><td>Multi-AZ</td><td>99.99%</td></tr>
-          <tr><td>EC2</td><td>Single-AZ</td><td>99.5%</td></tr>
-          <tr><td>Lambda</td><td>—</td><td>99.95%</td></tr>
-          <tr><td>Elastic Load Balancing</td><td>—</td><td>99.99%</td></tr>
-          <tr><td>Amazon S3</td><td>—</td><td>99.9%</td></tr>
-          <tr><td>Amazon EBS</td><td>—</td><td>99.99%</td></tr>
-          <tr><td>RDS</td><td>Multi-AZ</td><td>99.95%</td></tr>
-          <tr><td>RDS</td><td>Single-AZ</td><td>❌ No SLA</td></tr>
-          <tr><td>DynamoDB</td><td>Standard</td><td>99.99%</td></tr>
-          <tr><td>DynamoDB</td><td>Global Tables</td><td>99.999%</td></tr>
-          <tr><td>Beta/Preview services</td><td>Any</td><td>❌ No SLA</td></tr>
-        </tbody>
-      </table>
-      <h3 style="margin-top:16px">S3 Credit Schedule</h3>
-      <table>
-        <thead><tr><th>Monthly Uptime</th><th>Credit</th></tr></thead>
-        <tbody>
-          <tr><td>&lt;99.9% but ≥99%</td><td>10% of monthly S3 fees</td></tr>
-          <tr><td>&lt;99%</td><td>25% of monthly S3 fees</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>⚠️ Credits are not cash.</strong> Applied only to future bills. Require a formal support case with logs and resource IDs — no automatic issuance. Capped at 25–30% of monthly service fees for the affected service, representing perhaps 1–3 days of downtime cost. SLAs cover availability only — not performance (latency, throughput).</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="aws-tiers">
-      <table>
-        <thead><tr><th>Dimension</th><th>Standard ACA</th><th>Enterprise (EDP/PPA)</th></tr></thead>
-        <tbody>
-          <tr><td>Pricing</td><td>List / pay-as-you-go</td><td>Negotiated discounts; committed spend (typically $1M–$5M+ threshold)</td></tr>
-          <tr><td>Liability cap</td><td>Trailing 12 months, per-service</td><td>Typically unchanged (requires large-enterprise negotiation to modify)</td></tr>
-          <tr><td>Enterprise Support</td><td>Optional (add-on)</td><td>Mandatory (priced at 10% of monthly usage)</td></tr>
-          <tr><td>Technical Account Manager</td><td>❌ Not included</td><td>✅ Included</td></tr>
-          <tr><td>SLA terms</td><td>Standard per-service</td><td>Can negotiate higher uptime commitments for critical services</td></tr>
-          <tr><td>Amendment rights</td><td>Unilateral by AWS</td><td>Can negotiate notice period provisions</td></tr>
-          <tr><td>Data retention post-termination</td><td>Standard 90-day window</td><td>Can negotiate extended retention for migration</td></tr>
-          <tr><td>Audit rights</td><td>Standard SOC/ISO reports</td><td>Can negotiate enhanced audit access</td></tr>
-          <tr><td>Governing law</td><td>Washington State</td><td>Negotiable by jurisdiction</td></tr>
-          <tr><td>Suspension rights</td><td>AWS can suspend immediately</td><td>Typically unchanged</td></tr>
-        </tbody>
-      </table>
-      <div class="highlight-box warn" style="margin-top:12px">
-        <p><strong>AWS Enterprise Support is mandatory for EDP customers and priced at ~10% of monthly usage.</strong> It is a support tier only — it does not change any liability, legal terms, or SLA commitments.</p>
-      </div>
-    </div>
-
-    <div class="tab-content" id="aws-gotchas">
+    <div class="gotcha-card">
+      <div class="vendor-name" style="color:#ff9900">AWS</div>
       <ul class="gotcha-list">
-        <li><strong>Liability cap is per-service, not total spend</strong> — a $10M/year customer gets a cap based only on fees for the specific service that caused harm</li>
-        <li><strong>"Unavailability" explicitly excluded from consequential damages</strong> — even a total outage won't trigger meaningful liability; SLA credits are the effective ceiling</li>
-        <li><strong>Unilateral amendment rights — no notice period for non-SLA changes</strong> — continued use = acceptance of any posted revision</li>
-        <li><strong>Suspension on "reasonable belief" with no cure period</strong> — AWS can immediately cut off all production workloads with no opportunity to cure before suspension</li>
-        <li><strong>30-day termination for convenience by AWS</strong> — insufficient for most enterprises to migrate deeply integrated workloads</li>
-        <li><strong>Content removal — 2-business-day rule</strong> — AWS can demand AUP-violating content be removed within 2 days or suspend services</li>
-        <li><strong>SLA credits require manual claiming with technical evidence</strong> — no automatic issuance; credits applied to future bills only, not cash; capped at 25–30% of affected service fees</li>
-        <li><strong>Free egress is a pricing policy, not an ACA term</strong> — could theoretically be reversed without contract amendment</li>
-        <li><strong>Broad customer indemnification of AWS</strong> — covers privacy violations, IP infringement in customer content, regulatory actions; no carve-out for AWS's own negligence contributing to the triggering event</li>
-        <li><strong>No specific breach notification SLA</strong> — "without undue delay" provides no actionable hours commitment; no escalation path, no dedicated incident response contact, no remediation coverage</li>
-        <li><strong>Beta services have no SLA, no liability</strong> — AWS launches many significant services in preview/beta; production workloads on these have essentially no contractual protection</li>
-        <li><strong>AI/ML training prohibition is policy, not contract</strong> — AWS doesn't train on customer data, but the commitment is in posted FAQ language, not a clause with defined contractual remedies</li>
+        <li>Continued use = acceptance of updated terms — no minimum notice for material changes</li>
+        <li>12-month liability cap; no breach-specific enhancement in standard terms</li>
+        <li>No-training commitment is policy-based, not a standalone contractual obligation</li>
+        <li>SLA is per-service — requires knowing exactly which services are in scope</li>
       </ul>
     </div>
   </div>
-</section>
-
-</main>
 </div>
 
+</main>
+
 <script>
-function showTab(btn, contentId) {
-  const vendor = btn.closest('.vendor-body');
-  vendor.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  vendor.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(contentId).classList.add('active');
-}
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
 
-// Sidebar active state on scroll
-const sections = document.querySelectorAll('.vendor-section, .comparison-section');
-const navLinks = document.querySelectorAll('aside a');
-
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop - 100;
-    if (window.scrollY >= sectionTop) current = section.getAttribute('id');
-  });
-  navLinks.forEach(link => {
-    link.classList.remove('active');
-    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
-  });
-});
+  function toggleObj(header) {
+    const body = header.nextElementSibling;
+    const isOpen = header.classList.contains('open');
+    if (isOpen) {
+      header.classList.remove('open');
+      body.classList.remove('open');
+    } else {
+      header.classList.add('open');
+      body.classList.add('open');
+    }
+  }
 </script>
-
 </body>
 </html>
