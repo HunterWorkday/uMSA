@@ -65,6 +65,9 @@
   .diff-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; border-left: 4px solid var(--wday-blue); }
   .diff-card h4 { font-size: 13px; font-weight: 700; color: var(--wday-navy); margin-bottom: 6px; }
   .diff-card p { font-size: 13px; color: #475569; margin: 0; line-height: 1.55; }
+  .diff-icon { font-size: 22px; margin-bottom: 8px; }
+  .diff-title { font-size: 13px; font-weight: 700; color: var(--wday-navy); margin-bottom: 6px; }
+  .diff-body { font-size: 13px; color: #475569; line-height: 1.55; }
 
   /* ALERTS */
   .alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; }
@@ -539,10 +542,14 @@
 
 <!-- ===== COMPETITIVE INTEL ===== -->
 <div class="tab-panel" id="tab-competitive">
-  <div class="page-title">Competitive Intel</div>
-  <div class="page-sub">How Workday's uMSA stacks up: headlines for sales conversations</div>
+  <div class="page-title">The Industry Standard</div>
+  <div class="page-sub">Major AI platforms have converged on the same contractual model. Here's where Workday fits in and where we go further.</div>
 
-  <div class="section-label">Cross-vendor comparison</div>
+  <div class="alert green" style="margin-bottom:1.5rem">
+    <strong>Framing for sales conversations:</strong> What Workday has built with the uMSA is not unusual. Every major AI platform, including GCP, AWS, Snowflake, OpenAI, and Databricks, has moved to a similar structure: a universal agreement, no training on customer data, and customer ownership of outputs. The industry has standardized here. What you are telling customers is not "sign this new thing." You are telling them Workday has caught up to, and in key areas exceeded, what the rest of the market already delivers.
+  </div>
+
+  <div class="section-label">How Workday's approach aligns with the market</div>
   <div class="comp-wrap">
     <table class="comp-table">
       <thead>
@@ -672,85 +679,27 @@
     </table>
   </div>
 
-  <div class="section-label">Vendor watch-outs for sales conversations</div>
-  <div class="gotcha-grid">
-    <div class="gotcha-card">
-      <div class="vendor-name" style="color:#d97706">Anthropic</div>
-      <ul class="gotcha-list">
-        <li>No default SLA: "AS IS / AS AVAILABLE" for standard API</li>
-        <li>Consumer plans (Pro/Team) training ON by default as of Sept. 28, 2025: shadow IT risk</li>
-        <li>Immediate suspension without notice for policy violations</li>
-        <li>No structured data export mechanism on termination</li>
-        <li>Bartz v. Anthropic ($1.5B settlement) did not release output infringement claims</li>
-        <li>Hallucination liability fully on the customer</li>
-      </ul>
+  <div class="section-label">Where Workday goes further</div>
+  <div class="grid-2">
+    <div class="diff-card">
+      <div class="diff-icon">🛡️</div>
+      <div class="diff-title">Breach remediation costs are outside the liability cap</div>
+      <div class="diff-body">Workday contractually pays for forensic investigation, breach notifications, one year of credit monitoring, and one year of call center services from its own pocket, outside the standard liability cap. No other major vendor in this peer group includes this in standard terms. The industry norm is to count remediation costs against the cap or exclude them entirely.</div>
     </div>
-    <div class="gotcha-card">
-      <div class="vendor-name" style="color:#e11d48">Databricks</div>
-      <ul class="gotcha-list">
-        <li>PayGo: Databricks can modify MCSA unilaterally: continued use = consent</li>
-        <li>Data loss explicitly excluded from consequential damages: even from Databricks negligence</li>
-        <li>30-day data deletion after termination: no grace period, no read-only access</li>
-        <li>Apache Spark open-source IP carveout: the core compute engine is not covered by IP indemnity</li>
-        <li>3 business days breach notification ≠ 72 calendar hours (GDPR gap)</li>
-      </ul>
+    <div class="diff-card">
+      <div class="diff-icon">⏱️</div>
+      <div class="diff-title">48-hour breach notification (contractual, not aspirational)</div>
+      <div class="diff-body">Workday commits to a 48-hour breach notification window in the contract itself. Most peers use "without undue delay" language (GCP, OpenAI) or 72-hour windows (SAP, Oracle, Snowflake). The 48-hour commitment is among the strongest in the peer group and is backed by a contractual obligation, not just a policy.</div>
     </div>
-    <div class="gotcha-card">
-      <div class="vendor-name" style="color:#1a73e8">GCP</div>
-      <ul class="gotcha-list">
-        <li>AI/ML data use protections not explicit in base terms: require service-specific terms</li>
-        <li>Breach notification: "without undue delay": no fixed clock</li>
-        <li>12-month liability cap with no breach-specific enhancement in base contract</li>
-        <li>Multiple URL-incorporated documents add complexity for legal review</li>
-      </ul>
+    <div class="diff-card">
+      <div class="diff-icon">📈</div>
+      <div class="diff-title">Enhanced 24-month liability cap for security and privacy breaches</div>
+      <div class="diff-body">For breaches of confidentiality, security, or privacy, the liability cap doubles to 24 months of fees, on top of the remediation costs that sit outside the cap entirely. Most peers cap at 12 months (GCP, AWS, OpenAI, SAP, Oracle). Databricks and Snowflake use a 2x fee structure, which is comparable but does not include the separate remediation carve-out.</div>
     </div>
-    <div class="gotcha-card">
-      <div class="vendor-name" style="color:#10a37f">OpenAI</div>
-      <ul class="gotcha-list">
-        <li>No default SLA: enterprise terms require sales negotiation</li>
-        <li>Breach notification: "without undue delay": no contractual clock</li>
-        <li>14-day pricing change notice only: other material changes can happen faster</li>
-        <li>No structured data export on termination</li>
-        <li>Copyright Shield (uncapped IP indemnity) applies to ChatGPT Enterprise only</li>
-      </ul>
-    </div>
-    <div class="gotcha-card">
-      <div class="vendor-name" style="color:#29b5e8">Snowflake</div>
-      <ul class="gotcha-list">
-        <li>Committed to 72-hour breach notification in DPA: took 45 days in the 2024 Neiman Marcus incident</li>
-        <li>URL-incorporated terms: changes can take effect with minimal notice</li>
-        <li>2x liability cap requires a specific data protection breach trigger to activate</li>
-        <li>Customer-managed keys (Tri-Secret Secure) requires Business Critical tier</li>
-      </ul>
-    </div>
-    <div class="gotcha-card">
-      <div class="vendor-name" style="color:#ff9900">AWS</div>
-      <ul class="gotcha-list">
-        <li>Continued use = acceptance of updated terms: no minimum notice for material changes</li>
-        <li>12-month liability cap; no breach-specific enhancement in standard terms</li>
-        <li>No-training commitment is policy-based, not a standalone contractual obligation</li>
-        <li>SLA is per-service: requires knowing exactly which services are in scope</li>
-      </ul>
-    </div>
-    <div class="gotcha-card">
-      <div class="vendor-name" style="color:#a78bfa">SAP</div>
-      <ul class="gotcha-list">
-        <li>AI data use is opt-out policy via SAP for Me, not a hard contractual prohibition; enterprise customers pushed back publicly in 2024</li>
-        <li>AI output ownership: customer receives a license, not unencumbered IP ownership: outputs are subject to SAP's pre-existing rights in models and training data</li>
-        <li>RISE with SAP bundles create deep lock-in: infrastructure, software, and services under one SAP-managed contract; exit is complex</li>
-        <li>Renewal escalators of 5–7% annually compound quickly; credit conversion for on-prem customers decreases ~10% per year creating time-pressure</li>
-        <li>Licensing metrics (FUE, named users, digital documents) are complex: indirect access and API integrations can trigger unexpected true-up charges</li>
-      </ul>
-    </div>
-    <div class="gotcha-card">
-      <div class="vendor-name" style="color:#fb923c">Oracle</div>
-      <ul class="gotcha-list">
-        <li>2025 Oracle Health breach: Oracle communicated only by phone, asked hospitals to delay notifications, and provided no written documentation. Direct HIPAA exposure for customers</li>
-        <li>Hosting &amp; Delivery Policies incorporated by reference and updatable unilaterally: Oracle determines what counts as "no material reduction"</li>
-        <li>HIPAA BAA requires a separate paid add-on license ("HIPAA Advanced Security for Fusion SaaS"), not automatic</li>
-        <li>AI output ownership: Oracle and its licensors retain all IP rights in AI Services; customers receive a license only</li>
-        <li>PO subordination trap: Oracle's ordering documents override any conflicting purchase order boilerplate: protective terms must be in the Oracle doc, not the PO</li>
-      </ul>
+    <div class="diff-card">
+      <div class="diff-icon">📋</div>
+      <div class="diff-title">One agreement covers all Workday products</div>
+      <div class="diff-body">The uMSA is product-agnostic. A single agreement governs every Workday SaaS offering, with product-specific details captured in Product Terms rather than separate addenda. Most competitors use layered document stacks: base terms plus service-specific agreements, DPAs, AI terms, SLA schedules, and order forms. Each new Workday product a customer adopts does not require a new contract negotiation.</div>
     </div>
   </div>
 </div>
